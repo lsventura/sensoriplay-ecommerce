@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Cadastro de Produtos | Sensori Play</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            color: #2c3e50;
+        }
+        header {
+            background: #ff6b9d;
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header h1 {
+            font-size: 1.4rem;
+            margin: 0;
+        }
+        header a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+        main {
+            max-width: 1100px;
+            margin: 2rem auto;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        h2 {
+            margin-top: 0;
+        }
+        form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem 1.5rem;
+            margin-bottom: 2rem;
+        }
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.5rem 0.6rem;
+            border-radius: 6px;
+            border: 1px solid #d0d0d0;
+            font-size: 0.95rem;
+        }
+        textarea { resize: vertical; min-height: 80px; }
+        .full-row { grid-column: 1 / -1; }
+        .actions {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 0.75rem;
+        }
+        button {
+            border: none;
+            border-radius: 999px;
+            padding: 0.6rem 1.4rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .btn-primary {
+            background: #ff6b9d;
+            color: #fff;
+        }
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 0.5rem 0.6rem;
+            border-bottom: 1px solid #ecf0f1;
+            text-align: left;
+        }
+        th {
+            background: #fafafa;
+        }
+        tr:hover td {
+            background: #fcfcfc;
+        }
+        .tag {
+            display: inline-block;
+            padding: 0.1rem 0.5rem;
+            border-radius: 999px;
+            background: #eafaf1;
+            color: #27ae60;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .danger {
+            color: #e74c3c;
+            cursor: pointer;
+        }
+        #status {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Admin - Cadastro de Produtos</h1>
+    <a href="../index.html">← Voltar para a loja</a>
+</header>
+<main>
+    <h2>Novo produto</h2>
+    <p id="status"></p>
+    <form id="productForm">
+        <div>
+            <label for="name">Nome</label>
+            <input type="text" id="name" required>
+        </div>
+        <div>
+            <label for="price">Preço (R$)</label>
+            <input type="number" step="0.01" id="price" required>
+        </div>
+        <div>
+            <label for="category">Categoria</label>
+            <select id="category" required>
+                <option value="sensorial">Sensorial</option>
+                <option value="cognitivo">Cognitivo</option>
+                <option value="motor">Motor</option>
+                <option value="criativo">Criativo</option>
+            </select>
+        </div>
+        <div>
+            <label for="age_range">Faixa etária</label>
+            <input type="text" id="age_range" placeholder="ex: 3-5">
+        </div>
+        <div>
+            <label for="stock">Estoque</label>
+            <input type="number" id="stock" value="0" min="0">
+        </div>
+        <div>
+            <label for="emoji">Emoji</label>
+            <input type="text" id="emoji" placeholder="🎁">
+        </div>
+        <div>
+            <label for="badge">Selo (badge)</label>
+            <input type="text" id="badge" placeholder="Novo, Destaque, Mais Vendido...">
+        </div>
+        <div>
+            <label for="featured">Destaque</label>
+            <select id="featured">
+                <option value="false">Não</option>
+                <option value="true">Sim</option>
+            </select>
+        </div>
+        <div class="full-row">
+            <label for="description">Descrição</label>
+            <textarea id="description"></textarea>
+        </div>
+        <div class="actions">
+            <button type="submit" class="btn-primary">Salvar produto</button>
+            <button type="button" class="btn-secondary" onclick="document.getElementById('productForm').reset()">Limpar</button>
+        </div>
+    </form>
+
+    <h2>Produtos cadastrados</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Categoria</th>
+            <th>Preço</th>
+            <th>Faixa</th>
+            <th>Estoque</th>
+            <th>Destaque</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody id="productsTableBody"></tbody>
+    </table>
+</main>
+
+<script>
+    const API_BASE = 'http://127.0.0.1:8000'; // ajuste para o domínio da API em produção
+
+    async function loadProducts() {
+        const tbody = document.getElementById('productsTableBody');
+        tbody.innerHTML = '<tr><td colspan="8">Carregando...</td></tr>';
+        try {
+            const resp = await fetch(`${API_BASE}/admin/products`);
+            if (!resp.ok) throw new Error('Erro ao listar produtos');
+            const data = await resp.json();
+            if (!data.length) {
+                tbody.innerHTML = '<tr><td colspan="8">Nenhum produto cadastrado ainda.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.map(p => `
+                <tr>
+                    <td>${p.id}</td>
+                    <td>${p.name}</td>
+                    <td>${p.category}</td>
+                    <td>R$ ${p.price.toFixed(2).replace('.', ',')}</td>
+                    <td>${p.age_range}</td>
+                    <td>${p.stock ?? '-'}</td>
+                    <td>${p.featured ? '<span class="tag">Destaque</span>' : ''}</td>
+                    <td><span class="danger" onclick="deleteProduct(${p.id})">Excluir</span></td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = '<tr><td colspan="8">Erro ao carregar produtos (verifique se a API está rodando e DATABASE_URL configurada).</td></tr>';
+        }
+    }
+
+    async function deleteProduct(id) {
+        if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+        try {
+            const resp = await fetch(`${API_BASE}/admin/products/${id}`, { method: 'DELETE' });
+            if (!resp.ok) throw new Error('Falha ao excluir');
+            setStatus('Produto excluído com sucesso.', 'ok');
+            loadProducts();
+        } catch (err) {
+            console.error(err);
+            setStatus('Erro ao excluir produto.', 'error');
+        }
+    }
+
+    function setStatus(msg, type) {
+        const el = document.getElementById('status');
+        el.textContent = msg;
+        el.style.color = type === 'error' ? '#e74c3c' : '#27ae60';
+    }
+
+    document.getElementById('productForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+            name: document.getElementById('name').value,
+            price: parseFloat(document.getElementById('price').value),
+            category: document.getElementById('category').value,
+            age_range: document.getElementById('age_range').value,
+            stock: parseInt(document.getElementById('stock').value || '0', 10),
+            emoji: document.getElementById('emoji').value || '🎁',
+            badge: document.getElementById('badge').value || null,
+            featured: document.getElementById('featured').value === 'true',
+            description: document.getElementById('description').value,
+        };
+        try {
+            const resp = await fetch(`${API_BASE}/admin/products`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            if (!resp.ok) throw new Error('Falha ao salvar');
+            setStatus('Produto salvo com sucesso.', 'ok');
+            (document.getElementById('productForm')).reset();
+            loadProducts();
+        } catch (err) {
+            console.error(err);
+            setStatus('Erro ao salvar produto. Verifique se a API está rodando e DATABASE_URL configurada.', 'error');
+        }
+    });
+
+    loadProducts();
+</script>
+</body>
+</html>
