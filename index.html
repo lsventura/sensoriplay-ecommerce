@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SensoriPlay - Brinquedos Sensoriais & Educativos</title>
+    <title>Sensori Play - Brinquedos Sensoriais & Educativos</title>
     <style>
         :root {
             --color-primary: #FF6B9D;
@@ -53,9 +53,6 @@
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--color-primary);
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -64,12 +61,11 @@
         }
 
         .logo:hover {
-            transform: scale(1.05);
+            transform: scale(1.03);
         }
 
-        .logo span:first-child {
-            display: inline-block;
-            animation: float 3s ease-in-out infinite;
+        .logo-img {
+            height: 40px;
         }
 
         .search-bar {
@@ -764,15 +760,6 @@
             }
         }
 
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-15px);
-            }
-        }
-
         @keyframes pulse {
             0%, 100% {
                 transform: scale(1);
@@ -871,7 +858,7 @@
     <header class="header">
         <nav class="nav-container">
             <div class="logo" onclick="scrollToTop()">
-                <span>🎨</span> SensoriPlay
+                <img src="assets/sensori-play-logo.png" alt="Sensori Play - Explorando os sentidos, criando diversão." class="logo-img">
             </div>
             <div class="search-bar">
                 <input type="text" class="search-input" id="searchInput" placeholder="Buscar brinquedos sensoriais...">
@@ -901,8 +888,8 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Desenvolvimento Sensorial Através da Brincadeira</h1>
-            <p>Brinquedos educativos impressos em 3D que estimulam os sentidos e promovem o aprendizado das crianças</p>
+            <h1>Explorando os sentidos, criando diversão.</h1>
+            <p>Brinquedos educativos impressos em 3D que estimulam os sentidos e promovem o aprendizado das crianças.</p>
             <button class="cta-btn" onclick="scrollToProducts()">Explorar Produtos</button>
         </div>
     </section>
@@ -946,22 +933,22 @@
             <div class="feature-card">
                 <div class="feature-icon">🎯</div>
                 <h3 class="feature-title">Desenvolvimento Sensorial</h3>
-                <p class="feature-text">Estimula os sentidos tátil, visual e auditivo das crianças</p>
+                <p class="feature-text">Estimula os sentidos tátil, visual e auditivo das crianças.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">♻️</div>
                 <h3 class="feature-title">Sustentável</h3>
-                <p class="feature-text">Impressão 3D com materiais PLA biodegradáveis</p>
+                <p class="feature-text">Impressão 3D com materiais PLA biodegradáveis.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">🔒</div>
                 <h3 class="feature-title">Seguro</h3>
-                <p class="feature-text">Produtos testados e seguros para todas as idades</p>
+                <p class="feature-text">Produtos testados e seguros para todas as idades.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">🚚</div>
                 <h3 class="feature-title">Entrega Rápida</h3>
-                <p class="feature-text">Envio para todo Brasil com rastreamento</p>
+                <p class="feature-text">Envio para todo Brasil com rastreamento.</p>
             </div>
         </div>
     </section>
@@ -995,8 +982,8 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h3>SensoriPlay</h3>
-                <p>Brinquedos sensoriais impressos em 3D para o desenvolvimento infantil</p>
+                <h3>Sensori Play</h3>
+                <p>Explorando os sentidos, criando diversão.</p>
             </div>
             <div class="footer-section">
                 <h3>Links Rápidos</h3>
@@ -1026,7 +1013,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 SensoriPlay. Todos os direitos reservados.</p>
+            <p>&copy; 2026 Sensori Play. Todos os direitos reservados.</p>
         </div>
     </footer>
 
