@@ -1,12 +1,17 @@
 import logging
 import os
-from datetime import datetime
-from typing import List
+from datetime import datetime, timedelta
+from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from slowapi:import Limiter, _rate_limit_exceeded_handler
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from google.oauth2 import id_token as google_id_token
+from google.auth.transport import requests as google_requests
+from passlib.context import CryptContext
+from pydantic import BaseModel, EmailStr
+from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
@@ -44,6 +49,163 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# =========================
+# Autenticação e usuários
+# =========================
+
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-secret-change-me")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", "60"))
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class UserOut(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    is_admin: bool
+
+
+class UserCreate(BaseModel):
+    name: str
+    email: EmailStr
+    password: str
+
+
+class GoogleLoginRequest(BaseModel):
+    id_token: str
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def get_password_hash(password: str) -> str:
+    return pwd_context.hash(password)
+
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+def get_user_by_email(db: Session, email: str) -> Optional[database.User]:
+    return db.query(database.User).filter(database.User.email == email).first()
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> database.User:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Não foi possível validar as credenciais",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: int | None = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+
+    user = db.query(database.User).filter(database.User.id == int(user_id)).first()
+    if user is None:
+        raise credentials_exception
+    return user
+
+
+async def get_current_admin(current_user: database.User = Depends(get_current_user)) -> database.User:
+    if not current_user.is_admin:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acesso restrito a administradores")
+    return current_user
+
+
+@app.post("/auth/register", response_model=UserOut)
+@limiter.limit("20/minute")
+async def register_user(payload: UserCreate, db: Session = Depends(get_db)):
+    existing = get_user_by_email(db, payload.email)
+    if existing:
+        raise HTTPException(status_code=400, detail="E-mail já cadastrado")
+
+    user = database.User(
+        name=payload.name,
+        email=payload.email,
+        password_hash=get_password_hash(payload.password),
+        is_admin=False,
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return UserOut(id=user.id, name=user.name, email=user.email, is_admin=user.is_admin)
+
+
+@app.post("/auth/login", response_model=Token)
+@limiter.limit("30/minute")
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = get_user_by_email(db, form_data.username)
+    if not user or not verify_password(form_data.password, user.password_hash):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="E-mail ou senha inválidos")
+
+    access_token = create_access_token({"sub": str(user.id), "is_admin": user.is_admin})
+    return Token(access_token=access_token)
+
+
+@app.post("/auth/google", response_model=Token)
+@limiter.limit("30/minute")
+async def google_login(payload: GoogleLoginRequest, db: Session = Depends(get_db)):
+    if not GOOGLE_CLIENT_ID:
+        raise HTTPException(status_code=500, detail="GOOGLE_CLIENT_ID não configurado no servidor")
+
+    try:
+        idinfo = google_id_token.verify_oauth2_token(
+            payload.id_token,
+            google_requests.Request(),
+            GOOGLE_CLIENT_ID,
+        )
+    except Exception:
+        raise HTTPException(status_code=400, detail="ID token do Google inválido")
+
+    email = idinfo.get("email")
+    name = idinfo.get("name") or email.split("@")[0]
+    if not email:
+        raise HTTPException(status_code=400, detail="Não foi possível obter e-mail do Google")
+
+    user = get_user_by_email(db, email)
+    if not user:
+        user = database.User(
+            name=name,
+            email=email,
+            password_hash=get_password_hash(os.urandom(16).hex()),
+            is_admin=False,
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    access_token = create_access_token({"sub": str(user.id), "is_admin": user.is_admin})
+    return Token(access_token=access_token)
+
+
+@app.get("/auth/me", response_model=UserOut)
+@limiter.limit("60/minute")
+async def read_me(current_user: database.User = Depends(get_current_user)):
+    return UserOut(id=current_user.id, name=current_user.name, email=current_user.email, is_admin=current_user.is_admin)
+
+
+# =========================
+# Produtos
+# =========================
 
 
 class Product(BaseModel):
@@ -153,11 +315,12 @@ async def list_products(request: Request):
 
 @app.get("/admin/products", response_model=List[Product])
 @limiter.limit("60/minute")
-async def admin_list_products(request: Request, db: Session = Depends(get_db)):
-    """Lista produtos para uso em telas administrativas.
-
-    Requer DATABASE_URL configurada; sem banco, retorna o fallback em memória.
-    """
+async def admin_list_products(
+    request: Request,
+    db: Session = Depends(get_db),
+    _: database.User = Depends(get_current_admin),
+):
+    """Lista produtos para uso em telas administrativas (apenas admin)."""
     if database.SessionLocal is None:
         return PRODUCTS
 
@@ -183,11 +346,13 @@ async def admin_list_products(request: Request, db: Session = Depends(get_db)):
 
 @app.post("/admin/products", response_model=Product, status_code=status.HTTP_201_CREATED)
 @limiter.limit("30/minute")
-async def create_product(request: Request, payload: ProductCreate, db: Session = Depends(get_db)):
-    """Cria um novo produto.
-
-    OBS: autenticação/autorização de admin deve ser adicionada antes de expor em produção.
-    """
+async def create_product(
+    request: Request,
+    payload: ProductCreate,
+    db: Session = Depends(get_db),
+    _: database.User = Depends(get_current_admin),
+):
+    """Cria um novo produto (apenas admin)."""
     db_product = database.Product(
         name=payload.name,
         description=payload.description,
@@ -225,8 +390,9 @@ async def update_product(
     product_id: int,
     payload: ProductUpdate,
     db: Session = Depends(get_db),
+    _: database.User = Depends(get_current_admin),
 ):
-    """Atualiza um produto existente."""
+    """Atualiza um produto existente (apenas admin)."""
     db_product = db.query(database.Product).filter(database.Product.id == product_id).first()
     if not db_product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
@@ -254,8 +420,13 @@ async def update_product(
 
 @app.delete("/admin/products/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 @limiter.limit("30/minute")
-async def delete_product(request: Request, product_id: int, db: Session = Depends(get_db)):
-    """Remove um produto."""
+async def delete_product(
+    request: Request,
+    product_id: int,
+    db: Session = Depends(get_db),
+    _: database.User = Depends(get_current_admin),
+):
+    """Remove um produto (apenas admin)."""
     db_product = db.query(database.Product).filter(database.Product.id == product_id).first()
     if not db_product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
@@ -263,6 +434,11 @@ async def delete_product(request: Request, product_id: int, db: Session = Depend
     db.delete(db_product)
     db.commit()
     return None
+
+
+# =========================
+# Cupons
+# =========================
 
 
 class Coupon(BaseModel):
