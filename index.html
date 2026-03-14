@@ -150,6 +150,69 @@
             animation: pulse 1.5s ease-in-out infinite;
         }
 
+        /* User panel */
+        .user-panel {
+            position: fixed;
+            top: 80px;
+            right: 1.5rem;
+            width: 320px;
+            background: var(--color-surface);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            padding: 1.5rem;
+            z-index: 210;
+            transform: translateY(-20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.25s ease;
+        }
+
+        .user-panel.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .user-panel h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .user-panel p {
+            font-size: 0.9rem;
+            color: var(--color-text-light);
+            margin-bottom: 1rem;
+        }
+
+        .user-panel .user-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .user-panel button {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border-radius: 999px;
+            border: 1px solid #E0E0E0;
+            background: #f8f8f8;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .user-panel button.primary {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: #fff;
+        }
+
+        .user-panel button:hover {
+            filter: brightness(0.97);
+        }
+
         /* Hero Section */
         .hero {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -807,7 +870,7 @@
     <!-- Header -->
     <header class="header">
         <nav class="nav-container">
-            <div class="logo">
+            <div class="logo" onclick="scrollToTop()">
                 <span>🎨</span> SensoriPlay
             </div>
             <div class="search-bar">
@@ -815,7 +878,7 @@
                 <button class="search-btn" onclick="searchProducts()">🔍</button>
             </div>
             <div class="nav-icons">
-                <button class="icon-btn">👤</button>
+                <button class="icon-btn" onclick="toggleUserPanel()">👤</button>
                 <button class="icon-btn">❤️</button>
                 <button class="icon-btn" onclick="toggleCart()">
                     🛒
@@ -824,6 +887,16 @@
             </div>
         </nav>
     </header>
+
+    <!-- User Panel -->
+    <div class="user-panel" id="userPanel">
+        <h3>Área do cliente</h3>
+        <p>Em breve você poderá fazer login, acompanhar pedidos e salvar favoritos.</p>
+        <div class="user-actions">
+            <button class="primary" onclick="showNotification('Login será habilitado em breve!')">Entrar</button>
+            <button onclick="showNotification('Cadastro será habilitado em breve!')">Criar conta</button>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -910,7 +983,7 @@
     </div>
 
     <!-- Overlay -->
-    <div class="overlay" id="overlay" onclick="toggleCart()"></div>
+    <div class="overlay" id="overlay"></div>
 
     <!-- Notification -->
     <div class="notification" id="notification">
@@ -958,7 +1031,9 @@
     </footer>
 
     <script>
-        const products = [
+        const API_BASE = 'http://127.0.0.1:8000'; // ajustar para o domínio da API em produção
+
+        const FALLBACK_PRODUCTS = [
             {
                 id: 1,
                 name: 'Cubo Sensorial Fidget',
@@ -1093,8 +1168,37 @@
             }
         ];
 
+        let products = [];
         let cart = [];
-        let filteredProducts = [...products];
+        let filteredProducts = [];
+
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_BASE}/products`);
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar produtos da API');
+                }
+                const data = await response.json();
+                // Backend retorna age_range, aqui mapeamos para age usado no front
+                products = data.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    category: p.category,
+                    price: p.price,
+                    age: p.age_range || '3-5',
+                    description: p.description,
+                    emoji: p.emoji || '🎁',
+                    badge: p.badge,
+                    featured: p.featured
+                }));
+            } catch (err) {
+                console.warn('Usando produtos mockados (fallback):', err.message);
+                products = [...FALLBACK_PRODUCTS];
+            }
+
+            filteredProducts = [...products];
+            renderProducts();
+        }
 
         function renderProducts() {
             const grid = document.getElementById('productGrid');
@@ -1242,6 +1346,13 @@
         function toggleCart() {
             const sidebar = document.getElementById('cartSidebar');
             const overlay = document.getElementById('overlay');
+            const userPanel = document.getElementById('userPanel');
+
+            // Fecha painel de usuário se estiver aberto
+            if (userPanel.classList.contains('active')) {
+                userPanel.classList.remove('active');
+            }
+
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
         }
@@ -1268,7 +1379,42 @@
             document.getElementById('productGrid').scrollIntoView({ behavior: 'smooth' });
         }
 
-        renderProducts();
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleUserPanel() {
+            const userPanel = document.getElementById('userPanel');
+            const overlay = document.getElementById('overlay');
+
+            const willOpen = !userPanel.classList.contains('active');
+
+            // Fecha carrinho se estiver aberto
+            const sidebar = document.getElementById('cartSidebar');
+            if (sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+
+            if (willOpen) {
+                userPanel.classList.add('active');
+                overlay.classList.add('active');
+            } else {
+                userPanel.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        }
+
+        // Fechar tudo ao clicar no overlay
+        document.getElementById('overlay').addEventListener('click', () => {
+            const sidebar = document.getElementById('cartSidebar');
+            const userPanel = document.getElementById('userPanel');
+            sidebar.classList.remove('active');
+            userPanel.classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        });
+
+        // Inicializa carregando produtos da API (ou fallback)
+        loadProducts();
     </script>
 </body>
 </html>
