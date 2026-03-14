@@ -1,5 +1,6 @@
 import logging
 import os
+from datetime import datetime
 from typing import List
 
 from fastapi import FastAPI, HTTPException, Request, status
@@ -9,6 +10,8 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
+
+import database
 
 # Configuração básica de logging
 logger = logging.getLogger("sensoriplay")
@@ -53,7 +56,7 @@ class Product(BaseModel):
     featured: bool = False
 
 
-# Mock de produtos (em produção, ler do PostgreSQL)
+# Mock de produtos (fallback quando não há banco configurado)
 PRODUCTS: List[Product] = [
     Product(
         id=1,
@@ -89,7 +92,37 @@ async def health_check(request: Request):
 @app.get("/products", response_model=List[Product])
 @limiter.limit("60/minute")
 async def list_products(request: Request):
-    return PRODUCTS
+    """Lista produtos.
+
+    Se DATABASE_URL estiver configurada, lê do PostgreSQL via SQLAlchemy.
+    Caso contrário, usa a lista mockada em memória.
+    """
+    if database.SessionLocal is None:
+        return PRODUCTS
+
+    db = database.SessionLocal()
+    try:
+        db_products = db.query(database.Product).all()
+        if not db_products:
+            # Se o banco estiver vazio, ainda assim usamos o fallback em memória
+            return PRODUCTS
+
+        return [
+            Product(
+                id=p.id,
+                name=p.name,
+                category=p.category,
+                price=float(p.price),
+                age_range=p.age_range or "",
+                description=p.description or "",
+                emoji=p.emoji or "🎁",
+                badge=p.badge,
+                featured=p.featured,
+            )
+            for p in db_products
+        ]
+    finally:
+        db.close()
 
 
 class Coupon(BaseModel):
@@ -108,10 +141,45 @@ COUPONS = {
 @app.get("/coupons/{code}", response_model=Coupon)
 @limiter.limit("60/minute")
 async def get_coupon(request: Request, code: str):
-    coupon = COUPONS.get(code.upper())
-    if not coupon:
-        raise HTTPException(status_code=404, detail="Cupom não encontrado")
-    return coupon
+    """Busca cupom por código.
+
+    Com DATABASE_URL configurada, busca no banco (considerando active/validade).
+    Sem banco, usa o dicionário mockado em memória.
+    """
+    code_normalized = code.upper()
+
+    if database.SessionLocal is None:
+        coupon = COUPONS.get(code_normalized)
+        if not coupon:
+            raise HTTPException(status_code=404, detail="Cupom não encontrado")
+        return coupon
+
+    db = database.SessionLocal()
+    try:
+        db_coupon = (
+            db.query(database.Coupon)
+            .filter(database.Coupon.code == code_normalized)
+            .first()
+        )
+
+        if not db_coupon or not db_coupon.active:
+            raise HTTPException(status_code=404, detail="Cupom não encontrado")
+
+        if db_coupon.expires_at and db_coupon.expires_at < datetime.utcnow():
+            raise HTTPException(status_code=404, detail="Cupom expirado")
+
+        return Coupon(
+            code=db_coupon.code,
+            discount_percent=float(db_coupon.discount_percent)
+            if db_coupon.discount_percent is not None
+            else None,
+            discount_value=float(db_coupon.discount_value)
+            if db_coupon.discount_value is not None
+            else None,
+            is_free_shipping=db_coupon.is_free_shipping,
+        )
+    finally:
+        db.close()
 
 
 # Configuração de conexão com o banco de dados
