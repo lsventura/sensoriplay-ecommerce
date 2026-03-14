@@ -6,3 +6,6 @@ python-dotenv
 pydantic
 slowapi
 bcrypt
+python-jose[cryptography]
+passlib[bcrypt]
+google-auth

@@ -120,7 +120,10 @@
 <body>
 <header>
     <h1>Admin - Cadastro de Produtos</h1>
-    <a href="../index.html">← Voltar para a loja</a>
+    <div>
+        <button onclick="logout()" style="margin-right:1rem;" class="btn-secondary">Sair</button>
+        <a href="../index.html">← Voltar para a loja</a>
+    </div>
 </header>
 <main>
     <h2>Novo produto</h2>
@@ -197,11 +200,34 @@
 <script>
     const API_BASE = 'http://127.0.0.1:8000'; // ajuste para o domínio da API em produção
 
+    function getToken() {
+        return localStorage.getItem('sensori_token');
+    }
+
+    function ensureAuth() {
+        const token = getToken();
+        if (!token) {
+            window.location.href = '../auth/index.html';
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('sensori_token');
+        window.location.href = '../auth/index.html';
+    }
+
     async function loadProducts() {
+        ensureAuth();
         const tbody = document.getElementById('productsTableBody');
         tbody.innerHTML = '<tr><td colspan="8">Carregando...</td></tr>';
         try {
-            const resp = await fetch(`${API_BASE}/admin/products`);
+            const resp = await fetch(`${API_BASE}/admin/products`, {
+                headers: { 'Authorization': `Bearer ${getToken()}` },
+            });
+            if (resp.status === 401 || resp.status === 403) {
+                logout();
+                return;
+            }
             if (!resp.ok) throw new Error('Erro ao listar produtos');
             const data = await resp.json();
             if (!data.length) {
@@ -222,14 +248,21 @@
             `).join('');
         } catch (err) {
             console.error(err);
-            tbody.innerHTML = '<tr><td colspan="8">Erro ao carregar produtos (verifique se a API está rodando e DATABASE_URL configurada).</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8">Erro ao carregar produtos (verifique se a API está rodando e se você está autenticado).</td></tr>';
         }
     }
 
     async function deleteProduct(id) {
         if (!confirm('Tem certeza que deseja excluir este produto?')) return;
         try {
-            const resp = await fetch(`${API_BASE}/admin/products/${id}`, { method: 'DELETE' });
+            const resp = await fetch(`${API_BASE}/admin/products/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${getToken()}` },
+            });
+            if (resp.status === 401 || resp.status === 403) {
+                logout();
+                return;
+            }
             if (!resp.ok) throw new Error('Falha ao excluir');
             setStatus('Produto excluído com sucesso.', 'ok');
             loadProducts();
@@ -247,6 +280,7 @@
 
     document.getElementById('productForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        ensureAuth();
         const payload = {
             name: document.getElementById('name').value,
             price: parseFloat(document.getElementById('price').value),
@@ -261,19 +295,27 @@
         try {
             const resp = await fetch(`${API_BASE}/admin/products`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`,
+                },
                 body: JSON.stringify(payload),
             });
+            if (resp.status === 401 || resp.status === 403) {
+                logout();
+                return;
+            }
             if (!resp.ok) throw new Error('Falha ao salvar');
             setStatus('Produto salvo com sucesso.', 'ok');
             (document.getElementById('productForm')).reset();
             loadProducts();
         } catch (err) {
             console.error(err);
-            setStatus('Erro ao salvar produto. Verifique se a API está rodando e DATABASE_URL configurada.', 'error');
+            setStatus('Erro ao salvar produto. Verifique se a API está rodando e se você está autenticado.', 'error');
         }
     });
 
+    ensureAuth();
     loadProducts();
 </script>
 </body>
