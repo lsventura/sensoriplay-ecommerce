@@ -82,13 +82,13 @@ PRODUCTS: List[Product] = [
 
 @app.get("/health")
 @limiter.limit("10/second")
-async def health_check():
+async def health_check(request: Request):
     return {"status": "ok"}
 
 
 @app.get("/products", response_model=List[Product])
 @limiter.limit("60/minute")
-async def list_products():
+async def list_products(request: Request):
     return PRODUCTS
 
 
@@ -107,7 +107,7 @@ COUPONS = {
 
 @app.get("/coupons/{code}", response_model=Coupon)
 @limiter.limit("60/minute")
-async def get_coupon(code: str):
+async def get_coupon(request: Request, code: str):
     coupon = COUPONS.get(code.upper())
     if not coupon:
         raise HTTPException(status_code=404, detail="Cupom não encontrado")
