@@ -5,16 +5,12 @@ from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-<<<<<<< HEAD
-from pydantic import BaseModel
-=======
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from google.oauth2 import id_token as google_id_token
 from google.auth.transport import requests as google_requests
 from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr
->>>>>>> cc2c69f15bca8feb81e0920aae006fb14d4e3f11
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
