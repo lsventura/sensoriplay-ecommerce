@@ -133,7 +133,7 @@ async def get_current_admin(current_user: database.User = Depends(get_current_us
 
 @app.post("/auth/register", response_model=UserOut)
 @limiter.limit("20/minute")
-async def register_user(payload: UserCreate, db: Session = Depends(get_db)):
+async def register_user(request: Request, payload: UserCreate, db: Session = Depends(get_db)):
     existing = get_user_by_email(db, payload.email)
     if existing:
         raise HTTPException(status_code=400, detail="E-mail já cadastrado")
@@ -152,7 +152,7 @@ async def register_user(payload: UserCreate, db: Session = Depends(get_db)):
 
 @app.post("/auth/login", response_model=Token)
 @limiter.limit("30/minute")
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = get_user_by_email(db, form_data.username)
     if not user or not verify_password(form_data.password, user.password_hash):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="E-mail ou senha inválidos")
@@ -163,7 +163,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
 
 @app.post("/auth/google", response_model=Token)
 @limiter.limit("30/minute")
-async def google_login(payload: GoogleLoginRequest, db: Session = Depends(get_db)):
+async def google_login(request: Request, payload: GoogleLoginRequest, db: Session = Depends(get_db)):
     if not GOOGLE_CLIENT_ID:
         raise HTTPException(status_code=500, detail="GOOGLE_CLIENT_ID não configurado no servidor")
 
@@ -199,7 +199,7 @@ async def google_login(payload: GoogleLoginRequest, db: Session = Depends(get_db
 
 @app.get("/auth/me", response_model=UserOut)
 @limiter.limit("60/minute")
-async def read_me(current_user: database.User = Depends(get_current_user)):
+async def read_me(request: Request, current_user: database.User = Depends(get_current_user)):
     return UserOut(id=current_user.id, name=current_user.name, email=current_user.email, is_admin=current_user.is_admin)
 
 
