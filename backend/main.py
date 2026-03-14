@@ -3,15 +3,17 @@ import os
 from datetime import datetime
 from typing import List
 
-from fastapi import FastAPI, HTTPException, Request, status
+from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi:import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
+from sqlalchemy.orm import Session
 
 import database
+from database import get_db
 
 # Configuração básica de logging
 logger = logging.getLogger("sensoriplay")
@@ -54,6 +56,30 @@ class Product(BaseModel):
     emoji: str
     badge: str | None = None
     featured: bool = False
+
+
+class ProductCreate(BaseModel):
+    name: str
+    category: str
+    price: float
+    age_range: str
+    description: str
+    emoji: str = "🎁"
+    badge: str | None = None
+    featured: bool = False
+    stock: int = 0
+
+
+class ProductUpdate(BaseModel):
+    name: str | None = None
+    category: str | None = None
+    price: float | None = None
+    age_range: str | None = None
+    description: str | None = None
+    emoji: str | None = None
+    badge: str | None = None
+    featured: bool | None = None
+    stock: int | None = None
 
 
 # Mock de produtos (fallback quando não há banco configurado)
@@ -123,6 +149,120 @@ async def list_products(request: Request):
         ]
     finally:
         db.close()
+
+
+@app.get("/admin/products", response_model=List[Product])
+@limiter.limit("60/minute")
+async def admin_list_products(request: Request, db: Session = Depends(get_db)):
+    """Lista produtos para uso em telas administrativas.
+
+    Requer DATABASE_URL configurada; sem banco, retorna o fallback em memória.
+    """
+    if database.SessionLocal is None:
+        return PRODUCTS
+
+    db_products = db.query(database.Product).order_by(database.Product.id).all()
+    if not db_products:
+        return PRODUCTS
+
+    return [
+        Product(
+            id=p.id,
+            name=p.name,
+            category=p.category,
+            price=float(p.price),
+            age_range=p.age_range or "",
+            description=p.description or "",
+            emoji=p.emoji or "🎁",
+            badge=p.badge,
+            featured=p.featured,
+        )
+        for p in db_products
+    ]
+
+
+@app.post("/admin/products", response_model=Product, status_code=status.HTTP_201_CREATED)
+@limiter.limit("30/minute")
+async def create_product(request: Request, payload: ProductCreate, db: Session = Depends(get_db)):
+    """Cria um novo produto.
+
+    OBS: autenticação/autorização de admin deve ser adicionada antes de expor em produção.
+    """
+    db_product = database.Product(
+        name=payload.name,
+        description=payload.description,
+        price=payload.price,
+        category=payload.category,
+        age_range=payload.age_range,
+        emoji=payload.emoji,
+        badge=payload.badge,
+        featured=payload.featured,
+        stock=payload.stock,
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow(),
+    )
+    db.add(db_product)
+    db.commit()
+    db.refresh(db_product)
+
+    return Product(
+        id=db_product.id,
+        name=db_product.name,
+        category=db_product.category,
+        price=float(db_product.price),
+        age_range=db_product.age_range or "",
+        description=db_product.description or "",
+        emoji=db_product.emoji or "🎁",
+        badge=db_product.badge,
+        featured=db_product.featured,
+    )
+
+
+@app.put("/admin/products/{product_id}", response_model=Product)
+@limiter.limit("30/minute")
+async def update_product(
+    request: Request,
+    product_id: int,
+    payload: ProductUpdate,
+    db: Session = Depends(get_db),
+):
+    """Atualiza um produto existente."""
+    db_product = db.query(database.Product).filter(database.Product.id == product_id).first()
+    if not db_product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+    for field, value in payload.model_dump(exclude_unset=True).items():
+        setattr(db_product, field, value)
+
+    db_product.updated_at = datetime.utcnow()
+    db.add(db_product)
+    db.commit()
+    db.refresh(db_product)
+
+    return Product(
+        id=db_product.id,
+        name=db_product.name,
+        category=db_product.category,
+        price=float(db_product.price),
+        age_range=db_product.age_range or "",
+        description=db_product.description or "",
+        emoji=db_product.emoji or "🎁",
+        badge=db_product.badge,
+        featured=db_product.featured,
+    )
+
+
+@app.delete("/admin/products/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+@limiter.limit("30/minute")
+async def delete_product(request: Request, product_id: int, db: Session = Depends(get_db)):
+    """Remove um produto."""
+    db_product = db.query(database.Product).filter(database.Product.id == product_id).first()
+    if not db_product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+    db.delete(db_product)
+    db.commit()
+    return None
 
 
 class Coupon(BaseModel):
