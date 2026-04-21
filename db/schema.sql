@@ -43,7 +43,9 @@ CREATE TABLE orders (
     user_id INT REFERENCES users(id),
     total_value NUMERIC(10,2) NOT NULL,
     discount_value NUMERIC(10,2) DEFAULT 0,
+    shipping_cost NUMERIC(10,2) DEFAULT 0,
     final_value NUMERIC(10,2) NOT NULL,
+    shipping_address TEXT,
     status VARCHAR(30) NOT NULL DEFAULT 'pending',
     payment_provider VARCHAR(30),
     payment_id TEXT,
@@ -56,6 +58,7 @@ CREATE TABLE order_items (
     id SERIAL PRIMARY KEY,
     order_id INT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     product_id INT NOT NULL REFERENCES products(id),
+    product_name_snapshot TEXT NOT NULL,
     quantity INT NOT NULL,
     unit_price NUMERIC(10,2) NOT NULL,
     total_price NUMERIC(10,2) NOT NULL

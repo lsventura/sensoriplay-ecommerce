@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minha Conta | SensoriPlay</title>
+  <link rel="icon" href="/assets/sensori-play-logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/design-tokens.css">
+  <link rel="stylesheet" href="/assets/base.css">
+  <link rel="stylesheet" href="/assets/components.css">
+  <style>
+    /* Estilos especificos de minha-conta */
+
+    .site-nav{background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);}
+    .site-nav-inner{max-width:1280px;margin:0 auto;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;}
+    .logo-link img{height:44px;}
+    .nav-back{font-size:14px;color:var(--teal);font-weight:500;}
+    .nav-back:hover{text-decoration:underline;}
+
+    /* Não autenticado */
+    .auth-gate{max-width:480px;margin:80px auto;text-align:center;padding:24px;}
+    .auth-gate-icon{font-size:64px;margin-bottom:20px;}
+    .auth-gate h2{font-family:var(--font-display);font-size:24px;font-weight:800;margin-bottom:12px;}
+    .auth-gate p{font-size:15px;color:var(--text-muted);margin-bottom:24px;}
+
+    /* Layout autenticado */
+    .account-layout{max-width:1000px;margin:32px auto;padding:0 24px;display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:start;}
+    @media(max-width:680px){.account-layout{grid-template-columns:1fr;}}
+
+    /* Sidebar */
+    .account-sidebar{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;position:sticky;top:20px;}
+    .account-profile{padding:24px;border-bottom:1px solid var(--border);text-align:center;}
+    .account-avatar{width:72px;height:72px;border-radius:50%;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;}
+    .account-name{font-family:var(--font-display);font-size:18px;font-weight:800;margin-bottom:4px;}
+    .account-email{font-size:13px;color:var(--text-muted);}
+    .sidebar-nav{list-style:none;}
+    .sidebar-nav li a,.sidebar-nav li button{display:flex;align-items:center;gap:10px;padding:14px 20px;font-size:14px;font-weight:500;color:var(--text-muted);background:none;border:none;width:100%;text-align:left;cursor:pointer;transition:all 0.15s;border-left:3px solid transparent;}
+    .sidebar-nav li a:hover,.sidebar-nav li button:hover{color:var(--text-main);background:var(--bg);}
+    .sidebar-nav li a.active{color:var(--teal);border-left-color:var(--teal);background:var(--teal-light);font-weight:600;}
+    .sidebar-nav li button.logout-btn{color:var(--error);}
+
+    /* Conteúdo */
+    .account-content{}
+    .content-section{display:none;}
+    .content-section.active{display:block;}
+    .section-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px;}
+    .section-card h2{font-family:var(--font-display);font-size:20px;font-weight:800;margin-bottom:20px;}
+
+    /* Tabela de pedidos */
+    .orders-list{}
+    .order-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;}
+    .order-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+    .order-id{font-weight:600;font-size:15px;}
+    .order-date{font-size:13px;color:var(--text-muted);}
+    .order-status{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;}
+    .status-pending{background:var(--yellow-light);color:#92400e;}
+    .status-paid{background:#dcfce7;color:#15803d;}
+    .status-shipped{background:var(--teal-light);color:var(--teal);}
+    .status-delivered{background:#dcfce7;color:#15803d;}
+    .status-cancelled,.status-failed{background:#fee2e2;color:#b91c1c;}
+    .order-items{font-size:13px;color:var(--text-muted);margin-bottom:10px;line-height:1.6;}
+    .order-footer{display:flex;justify-content:space-between;align-items:center;}
+    .order-total{font-weight:700;font-size:16px;}
+    .order-track-btn{font-size:13px;color:var(--teal);font-weight:500;background:none;border:none;cursor:pointer;}
+    .order-track-btn:hover{text-decoration:underline;}
+
+    .empty-orders{text-align:center;padding:48px 24px;color:var(--text-muted);}
+    .empty-orders-icon{font-size:48px;margin-bottom:16px;}
+    .empty-orders h3{font-size:18px;margin-bottom:8px;color:var(--text-main);}
+
+    /* Botões */
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:500;border:none;cursor:pointer;text-decoration:none;}
+    .btn-primary{background:var(--coral);color:#fff;}
+    .btn-primary:hover{background:var(--coral-dark);}
+    .btn-secondary{border:2px solid var(--teal);color:var(--teal);background:transparent;}
+    .btn-secondary:hover{background:var(--teal-light);}
+
+    /* Detalhes do pedido */
+    .order-detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:all 0.25s;}
+    .order-detail-overlay.open{opacity:1;visibility:visible;}
+    .order-detail-modal{background:var(--surface);border-radius:16px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.16);}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--border);}
+    .modal-head h3{font-family:var(--font-display);font-size:18px;font-weight:800;}
+    .modal-close{background:none;border:none;font-size:22px;color:var(--text-muted);cursor:pointer;line-height:1;}
+    .modal-body{padding:20px 24px;}
+    .detail-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border);color:var(--text-muted);}
+    .detail-row:last-child{border:none;}
+    .detail-row strong{color:var(--text-main);}
+
+    /* Loading */
+    .loading{text-align:center;padding:48px;color:var(--text-muted);}
+    .loading-spinner{display:inline-block;width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:12px;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="/" class="logo-link"><img src="/assets/sensori-play-logo.png" alt="SensoriPlay"></a>
+    <a href="/" class="nav-back">&#8592; Voltar para a loja</a>
+  </div>
+</nav>
+
+<!-- Estado não logado -->
+<div class="auth-gate" id="authGate" style="display:none">
+  <div class="auth-gate-icon">&#128272;</div>
+  <h2>Acesso restrito</h2>
+  <p>Faça login para acessar sua conta, ver seus pedidos e acompanhar entregas.</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <a href="/auth/" class="btn btn-primary">Fazer login</a>
+    <a href="/" class="btn btn-secondary">Ver produtos</a>
+  </div>
+</div>
+
+<!-- Estado logado -->
+<div class="account-layout" id="accountLayout" style="display:none">
+
+  <!-- Sidebar -->
+  <div class="account-sidebar">
+    <div class="account-profile">
+      <div class="account-avatar">&#128100;</div>
+      <div class="account-name" id="userName">Carregando...</div>
+      <div class="account-email" id="userEmail"></div>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="#" class="active" onclick="showSection('orders',this)">&#128216; Meus pedidos</a></li>
+      <li><button class="logout-btn" onclick="logout()">&#128682; Sair</button></li>
+    </ul>
+  </div>
+
+  <!-- Conteúdo -->
+  <div class="account-content">
+
+    <!-- Pedidos -->
+    <div class="content-section active" id="ordersSection">
+      <div class="section-card">
+        <h2>Meus pedidos</h2>
+        <div id="ordersList">
+          <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Carregando pedidos...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal de detalhe do pedido -->
+<div class="order-detail-overlay" id="detailOverlay" onclick="closeDetailOnBg(event)">
+  <div class="order-detail-modal">
+    <div class="modal-head">
+      <h3 id="detailTitle">Pedido</h3>
+      <button class="modal-close" onclick="closeDetail()">&#10005;</button>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+  </div>
+</div>
+
+<script>
+const API_BASE = '';
+let token = null;
+let currentUser = null;
+let orders = [];
+
+/* ── Init ────────────────────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', async () => {
+  token = localStorage.getItem('sensori_token');
+  if (!token) {
+    document.getElementById('authGate').style.display = 'block';
+    return;
+  }
+  document.getElementById('accountLayout').style.display = 'grid';
+  await loadUser();
+  await loadOrders();
+});
+
+/* ── Usuário ─────────────────────────────────────────────────────── */
+async function loadUser() {
+  try {
+    const r = await fetch(`${API_BASE}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
+    if (r.status === 401) { logout(); return; }
+    currentUser = await r.json();
+    document.getElementById('userName').textContent  = currentUser.name;
+    document.getElementById('userEmail').textContent = currentUser.email;
+  } catch {}
+}
+
+/* ── Pedidos ─────────────────────────────────────────────────────── */
+async function loadOrders() {
+  try {
+    const r = await fetch(`${API_BASE}/orders`, { headers: { Authorization: `Bearer ${token}` } });
+    if (!r.ok) throw new Error();
+    orders = await r.json();
+    renderOrders();
+  } catch {
+    document.getElementById('ordersList').innerHTML =
+      '<p style="color:var(--error);font-size:14px">Erro ao carregar pedidos. Tente novamente.</p>';
+  }
+}
+
+function renderOrders() {
+  const el = document.getElementById('ordersList');
+  if (orders.length === 0) {
+    el.innerHTML = `
+      <div class="empty-orders">
+        <div class="empty-orders-icon">&#128216;</div>
+        <h3>Nenhum pedido ainda</h3>
+        <p>Explore nosso cat&aacute;logo e fa&ccedil;a seu primeiro pedido.</p>
+        <a href="/" class="btn btn-primary" style="margin-top:16px;display:inline-flex">Ver produtos</a>
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = orders.map(o => `
+    <div class="order-card">
+      <div class="order-head">
+        <div>
+          <div class="order-id">Pedido #${o.id}</div>
+          <div class="order-date">${formatDate(o.created_at)}</div>
+        </div>
+        <span class="order-status status-${o.status}">${statusLabel(o.status)}</span>
+      </div>
+      <div class="order-items">${o.items.map(i => `${i.product_name} × ${i.quantity}`).join(' &nbsp;·&nbsp; ')}</div>
+      <div class="order-footer">
+        <div class="order-total">R$ ${o.final_value.toFixed(2).replace('.',',')}</div>
+        <button class="order-track-btn" onclick="openDetail(${o.id})">Ver detalhes &#8594;</button>
+      </div>
+    </div>`).join('');
+}
+
+function formatDate(dt) {
+  if (!dt) return '';
+  return new Date(dt).toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+function statusLabel(s) {
+  const labels = {
+    pending:'Aguardando pagamento', paid:'Pago', processing:'Preparando',
+    shipped:'Enviado', delivered:'Entregue', cancelled:'Cancelado', failed:'Falha no pagamento'
+  };
+  return labels[s] || s;
+}
+
+/* ── Detalhe do pedido ───────────────────────────────────────────── */
+function openDetail(orderId) {
+  const o = orders.find(x => x.id === orderId);
+  if (!o) return;
+
+  document.getElementById('detailTitle').textContent = `Pedido #${o.id}`;
+
+  const addr = o.shipping_address;
+  const addrStr = addr
+    ? `${addr.street}, ${addr.number}${addr.complement ? ' '+addr.complement : ''} — ${addr.neighborhood}, ${addr.city}/${addr.state} — CEP ${addr.zip_code}`
+    : 'Não informado';
+
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-row"><span>Status</span><strong>${statusLabel(o.status)}</strong></div>
+    <div class="detail-row"><span>Data do pedido</span><strong>${formatDate(o.created_at)}</strong></div>
+    <div class="detail-row"><span>Endere&ccedil;o de entrega</span><strong style="text-align:right;max-width:280px">${addrStr}</strong></div>
+    <div style="margin:16px 0 8px;font-weight:600;font-size:14px">Itens</div>
+    ${o.items.map(i => `
+      <div class="detail-row">
+        <span>${i.product_name} × ${i.quantity}</span>
+        <strong>R$ ${i.total_price.toFixed(2).replace('.',',')}</strong>
+      </div>`).join('')}
+    <div style="margin-top:16px">
+      <div class="detail-row"><span>Subtotal</span><strong>R$ ${o.total.toFixed(2).replace('.',',')}</strong></div>
+      ${o.discount > 0 ? `<div class="detail-row" style="color:var(--success)"><span>Desconto</span><strong>− R$ ${o.discount.toFixed(2).replace('.',',')}</strong></div>` : ''}
+      <div class="detail-row"><span>Frete</span><strong>${o.shipping_cost > 0 ? 'R$ '+o.shipping_cost.toFixed(2).replace('.',',') : 'Gr&aacute;tis'}</strong></div>
+      <div class="detail-row" style="font-size:16px"><span><strong>Total</strong></span><strong>R$ ${o.final_value.toFixed(2).replace('.',',')}</strong></div>
+    </div>
+    ${o.payment_id ? `<div style="margin-top:12px;font-size:12px;color:var(--text-muted)">ID de pagamento: ${o.payment_id}</div>` : ''}
+  `;
+
+  document.getElementById('detailOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeDetailOnBg(e) {
+  if (e.target === document.getElementById('detailOverlay')) closeDetail();
+}
+
+/* ── Nav sidebar ─────────────────────────────────────────────────── */
+function showSection(section, link) {
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+  if (link) link.classList.add('active');
+  document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(section + 'Section');
+  if (target) target.classList.add('active');
+  return false;
+}
+
+/* ── Logout ──────────────────────────────────────────────────────── */
+function logout() {
+  localStorage.removeItem('sensori_token');
+  window.location.href = '/auth/';
+}
+</script>
+</body>
+</html>

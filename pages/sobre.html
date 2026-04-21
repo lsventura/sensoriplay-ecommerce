@@ -1,32 +1,207 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Sobre a Sensori Play</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #fafafa; color: #2c3e50; }
-        header { background: #ff6b9d; color: #fff; padding: 1.5rem 2rem; }
-        header h1 { margin: 0; font-size: 1.5rem; }
-        header a { color: #fff; text-decoration: none; font-size: 0.9rem; }
-        main { max-width: 900px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-        h2 { margin-top: 1.5rem; }
-        p { line-height: 1.6; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sobre a SensoriPlay — Nossa história e missão</title>
+  <meta name="description" content="SensoriPlay nasceu para reunir ciência do desenvolvimento com o prazer de brincar. Conheça nossa história, missão e posicionamento.">
+  <link rel="icon" href="/assets/sensori-play-logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/design-tokens.css">
+  <link rel="stylesheet" href="/assets/base.css">
+  <link rel="stylesheet" href="/assets/components.css">
+  <style>
+    /* Compatibilidade com tokens antigos usados nesta pagina */
+    :root {
+      --bg: var(--off-white);
+      --surface: var(--white);
+      --text-main: var(--ink);
+      --text-muted: var(--muted);
+      --font-display: var(--f-display);
+      --font-ui: var(--f-body);
+      --coral-light: var(--coral-soft);
+      --teal-light: var(--teal-soft);
+      --purple-light: var(--purple-soft);
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV */
+    .site-nav {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100;
+    }
+    .site-nav-inner {
+      max-width: 1280px; margin: 0 auto; padding: 14px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .logo-link img { height: 44px; }
+    .nav-back {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 14px; color: var(--teal); font-weight: 500;
+    }
+    .nav-back:hover { text-decoration: underline; }
+
+    /* HERO */
+    .page-hero {
+      background: linear-gradient(135deg, var(--teal-light) 0%, var(--coral-light) 100%);
+      padding: 72px 24px; text-align: center;
+    }
+    .page-hero h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800; color: var(--text-main); margin-bottom: 16px;
+    }
+    .page-hero p {
+      font-size: 18px; color: var(--text-muted); max-width: 600px; margin: 0 auto;
+    }
+
+    /* CONTENT */
+    .page-content { max-width: 800px; margin: 0 auto; padding: 64px 24px; }
+
+    .section-block { margin-bottom: 56px; }
+    .section-block h2 {
+      font-family: var(--font-display); font-size: 26px; font-weight: 800;
+      color: var(--text-main); margin-bottom: 16px;
+      padding-left: 16px; border-left: 4px solid var(--coral);
+    }
+    .section-block p {
+      font-size: 16px; color: var(--text-muted); line-height: 1.8; margin-bottom: 12px;
+    }
+    .section-block p strong { color: var(--text-main); }
+
+    /* VALORES */
+    .values-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;
+      margin-top: 24px;
+    }
+    .value-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px;
+    }
+    .value-icon { font-size: 28px; margin-bottom: 12px; }
+    .value-card h3 {
+      font-family: var(--font-display); font-size: 16px; font-weight: 700;
+      margin-bottom: 8px; color: var(--text-main);
+    }
+    .value-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+    /* DIFERENCIAÇÃO */
+    .diff-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+    .diff-table th {
+      background: var(--teal); color: #fff; padding: 12px 16px;
+      text-align: left; font-weight: 600;
+    }
+    .diff-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text-muted); }
+    .diff-table tr:hover td { background: var(--teal-light); }
+    .diff-table td:first-child { color: var(--text-main); font-weight: 600; }
+
+    /* FOOTER SIMPLES */
+    .page-footer {
+      background: var(--text-main); color: rgba(255,255,255,0.7);
+      text-align: center; padding: 32px 24px; font-size: 13px;
+    }
+    .page-footer a { color: rgba(255,255,255,0.7); }
+    .page-footer a:hover { color: #fff; }
+  </style>
 </head>
 <body>
-<header>
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h1>Sobre a Sensori Play</h1>
-        <a href="../index.html">← Voltar para a loja</a>
-    </div>
-</header>
-<main>
-    <p><strong>Sensori Play</strong> nasceu com o propósito de criar brinquedos sensoriais que unam diversão e desenvolvimento, ajudando crianças de diferentes idades a explorarem o mundo através dos sentidos.</p>
+
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="/" class="logo-link"><img src="/assets/sensori-play-logo.png" alt="SensoriPlay"></a>
+    <a href="/" class="nav-back">&#8592; Voltar para a loja</a>
+  </div>
+</nav>
+
+<div class="page-hero" id="inicio">
+  <h1>SensoriPlay — onde ciência encontra o brincar</h1>
+  <p>Não somos uma loja de brinquedos. Somos uma curadoria com propósito — para famílias que querem fazer a coisa certa e profissionais que precisam de praticidade.</p>
+</div>
+
+<div class="page-content">
+
+  <div class="section-block">
+    <h2>Nossa história</h2>
+    <p>A SensoriPlay surgiu da frustração real de quem busca produtos sensoriais para crianças no Brasil: você encontra muito volume e pouca curadoria. Loja de brinquedo genérica não sabe explicar o que o produto estimula. Marketplace tem preço mas não tem contexto. Importado tem contexto mas não chega.</p>
+    <p>Criamos a SensoriPlay para resolver isso: <strong>um e-commerce especializado exclusivamente em produtos sensoriais</strong>, com descrições técnicas reais, filtros cruzados por faixa etária, sentido e objetivo, e linguagem que respeita o adulto comprador — sem infantilizar quem está fazendo uma escolha séria pelo filho.</p>
+    <p>Atendemos famílias de desenvolvimento típico e neurodivergente com a mesma seriedade — sem segregar, sem estigmatizar, sem rotular a criança na vitrine.</p>
+  </div>
+
+  <div class="section-block" id="missao">
     <h2>Nossa missão</h2>
-    <p>Oferecer brinquedos educativos impressos em 3D que estimulem o tato, a visão, a coordenação motora e a curiosidade, sempre com foco em segurança, qualidade e acessibilidade.</p>
-    <h2>Como produzimos</h2>
-    <p>Todos os produtos são desenvolvidos com impressão 3D em materiais como PLA, pensado para minimizar resíduos e permitir personalização em pequenos lotes.</p>
-</main>
+    <p><strong>SensoriPlay é onde ciência do desenvolvimento encontra o prazer de brincar</strong> — o e-commerce brasileiro especializado em produtos sensoriais que crescem junto com a criança, do berço à escola.</p>
+    <p>Cada produto no catálogo passa por critério de faixa etária, sentido estimulado e segurança. Você não precisa garimpar em marketplace nem confiar em foto bonita.</p>
+    <p>Nossa proposta é simples: <strong>para toda criança, não só para diagnóstico.</strong></p>
+  </div>
+
+  <div class="section-block">
+    <h2>Nossos valores</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-icon">🔬</div>
+        <h3>Criterioso</h3>
+        <p>Cada afirmação tem fundamento. Quando dizemos "estimula propriocepção", explicamos o que isso significa. Não vendemos intenção — vendemos resultado descritível.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🤝</div>
+        <h3>Acolhedor</h3>
+        <p>A jornada de quem busca o produto certo pode vir carregada de ansiedade. A SensoriPlay faz companhia sem condescendência.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">💬</div>
+        <h3>Direto</h3>
+        <p>Frases curtas. Sem rodeios. Sem exagero. O produto fala por si. Não vendemos "brinquedinho fofo" — explicamos o que o produto faz no desenvolvimento real da criança.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">✅</div>
+        <h3>Seguro</h3>
+        <p>Todos os produtos passam por verificação de certificação INMETRO ou equivalente internacional. Sem importado genérico sem laudo.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <h2>Como nos diferenciamos</h2>
+    <table class="diff-table">
+      <thead>
+        <tr>
+          <th>Concorrente</th>
+          <th>Onde ficamos à frente</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>BmB Terapêuticos</td>
+          <td>Mais acessível para pais leigos; não parece catálogo hospitalar</td>
+        </tr>
+        <tr>
+          <td>Alma Azul</td>
+          <td>Atendemos TEA + TDAH + desenvolvimento típico sem rotular na vitrine</td>
+        </tr>
+        <tr>
+          <td>MercadoLivre</td>
+          <td>Curadoria humana especializada, descrições técnicas reais, adequação por faixa etária</td>
+        </tr>
+        <tr>
+          <td>Lovevery (EUA)</td>
+          <td>Sem assinatura obrigatória, preço BR, logística nacional, conteúdo em português</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-block">
+    <h2>Para profissionais</h2>
+    <p>Somos uma referência para terapeutas ocupacionais, fonoaudiólogos, pedagogos e educadores que precisam de produtos sensoriais confiáveis para recomendar às famílias dos seus pacientes e alunos.</p>
+    <p>Oferecemos suporte técnico por e-mail e WhatsApp para pedidos acima de R$300. Entre em contato: <a href="mailto:contato@sensoriplay.com.br" style="color:var(--teal)">contato@sensoriplay.com.br</a></p>
+  </div>
+
+</div>
+
+<footer class="page-footer">
+  <p>&copy; 2026 SensoriPlay &nbsp;|&nbsp; <a href="/pages/faq.html">FAQ</a> &nbsp;|&nbsp; <a href="/pages/contato.html">Contato</a> &nbsp;|&nbsp; <a href="/">Voltar à loja</a></p>
+</footer>
+
 </body>
 </html>

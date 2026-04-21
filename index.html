@@ -1,1407 +1,1510 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sensori Play - Brinquedos Sensoriais & Educativos</title>
-    <style>
-        :root {
-            --color-primary: #FF6B9D;
-            --color-primary-dark: #E85588;
-            --color-secondary: #4ECDC4;
-            --color-accent: #FFE66D;
-            --color-bg: #FAFAFA;
-            --color-surface: #FFFFFF;
-            --color-text: #2C3E50;
-            --color-text-light: #7F8C8D;
-            --color-success: #2ECC71;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
-            --shadow-lg: 0 8px 32px rgba(0,0,0,0.16);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--color-bg);
-            color: var(--color-text);
-            line-height: 1.6;
-        }
-
-        /* Header & Navigation */
-        .header {
-            background: var(--color-surface);
-            box-shadow: var(--shadow-sm);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .logo:hover {
-            transform: scale(1.03);
-        }
-
-        .logo-img {
-            height: 120px;
-        }
-
-        .search-bar {
-            flex: 1;
-            max-width: 600px;
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 0.75rem 3rem 0.75rem 1rem;
-            border: 2px solid #E0E0E0;
-            border-radius: 50px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.1);
-        }
-
-        .search-btn {
-            position: absolute;
-            right: 0.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .search-btn:hover {
-            background: var(--color-primary-dark);
-        }
-
-        .nav-icons {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            position: relative;
-            color: var(--color-text);
-            transition: color 0.3s;
-        }
-
-        .icon-btn:hover {
-            color: var(--color-primary);
-            transform: scale(1.15);
-        }
-
-        .icon-btn:active {
-            transform: scale(0.9);
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: var(--color-primary);
-            color: white;
-            font-size: 0.75rem;
-            padding: 0.2rem 0.4rem;
-            border-radius: 50%;
-            min-width: 20px;
-            text-align: center;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        /* User panel */
-        .user-panel {
-            position: fixed;
-            top: 80px;
-            right: 1.5rem;
-            width: 320px;
-            background: var(--color-surface);
-            border-radius: 16px;
-            box-shadow: var(--shadow-lg);
-            padding: 1.5rem;
-            z-index: 210;
-            transform: translateY(-20px);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.25s ease;
-        }
-
-        .user-panel.active {
-            transform: translateY(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .user-panel h3 {
-            margin-bottom: 0.5rem;
-        }
-
-        .user-panel p {
-            font-size: 0.9rem;
-            color: var(--color-text-light);
-            margin-bottom: 1rem;
-        }
-
-        .user-panel .user-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .user-panel button {
-            width: 100%;
-            padding: 0.6rem 1rem;
-            border-radius: 999px;
-            border: 1px solid #E0E0E0;
-            background: #f8f8f8;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .user-panel button.primary {
-            background: var(--color-primary);
-            border-color: var(--color-primary);
-            color: #fff;
-        }
-
-        .user-panel button:hover {
-            filter: brightness(0.97);
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 4rem 2rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-            background-size: 200% 200%;
-            animation: shimmer 3s infinite;
-        }
-
-        .hero-content {
-            max-width: 900px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            animation: fadeInUp 0.8s;
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            opacity: 0.95;
-            animation: fadeInUp 0.8s 0.2s backwards;
-        }
-
-        .cta-btn {
-            background: white;
-            color: #667eea;
-            padding: 1rem 3rem;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: var(--shadow-md);
-            animation: fadeInUp 0.8s 0.4s backwards;
-        }
-
-        .cta-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        /* Filter Bar */
-        .filter-bar {
-            background: var(--color-surface);
-            padding: 1.5rem 2rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .filter-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .filter-label {
-            font-weight: 600;
-            color: var(--color-text);
-        }
-
-        .filter-select {
-            padding: 0.5rem 1rem;
-            border: 2px solid #E0E0E0;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: border-color 0.3s;
-        }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--color-primary);
-        }
-
-        /* Main Content */
-        .main-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-        }
-
-        .section-title {
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            color: var(--color-text);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .section-title::before {
-            content: '';
-            width: 4px;
-            height: 2rem;
-            background: var(--color-primary);
-            border-radius: 2px;
-        }
-
-        /* Product Grid */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .product-card {
-            background: var(--color-surface);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .product-card {
-            animation: fadeInUp 0.6s ease-out backwards;
-        }
-
-        .product-card:nth-child(1) { animation-delay: 0.1s; }
-        .product-card:nth-child(2) { animation-delay: 0.2s; }
-        .product-card:nth-child(3) { animation-delay: 0.3s; }
-        .product-card:nth-child(4) { animation-delay: 0.4s; }
-        .product-card:nth-child(5) { animation-delay: 0.5s; }
-        .product-card:nth-child(6) { animation-delay: 0.6s; }
-
-        .product-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .product-card:hover .product-image {
-            transform: scale(1.1);
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: var(--color-accent);
-            color: var(--color-text);
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            z-index: 10;
-            animation: bounce 2s ease-in-out infinite;
-            box-shadow: 0 4px 12px rgba(255, 230, 109, 0.4);
-        }
-
-        .product-image {
-            width: 100%;
-            height: 280px;
-            object-fit: cover;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5rem;
-            transition: transform 0.3s ease;
-            overflow: hidden;
-        }
-
-        .product-info {
-            padding: 1.5rem;
-        }
-
-        .product-category {
-            color: var(--color-primary);
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--color-text);
-        }
-
-        .product-description {
-            font-size: 0.9rem;
-            color: var(--color-text-light);
-            margin-bottom: 1rem;
-            line-height: 1.5;
-        }
-
-        .product-age {
-            display: inline-block;
-            background: var(--color-secondary);
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin-bottom: 1rem;
-        }
-
-        .product-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .product-price {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--color-primary);
-        }
-
-        .add-to-cart {
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .add-to-cart:hover {
-            background: var(--color-primary-dark);
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.4);
-        }
-
-        .add-to-cart:active {
-            transform: scale(0.95);
-        }
-
-        /* Features Section */
-        .features {
-            background: var(--color-surface);
-            padding: 3rem 2rem;
-            margin: 4rem 0;
-            border-radius: 16px;
-        }
-
-        .features-grid {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            text-align: center;
-            padding: 2rem;
-            transition: all 0.3s;
-            border-radius: 12px;
-        }
-
-        .feature-card:hover {
-            background: rgba(255, 107, 157, 0.05);
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            display: inline-block;
-            transition: transform 0.3s;
-        }
-
-        .feature-card:hover .feature-icon {
-            transform: scale(1.2) rotate(5deg);
-        }
-
-        .feature-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .feature-text {
-            color: var(--color-text-light);
-            font-size: 0.95rem;
-        }
-
-        /* Cart Sidebar */
-        .cart-sidebar {
-            position: fixed;
-            right: -400px;
-            top: 0;
-            width: 400px;
-            height: 100vh;
-            background: var(--color-surface);
-            box-shadow: var(--shadow-lg);
-            transition: right 0.3s;
-            z-index: 200;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .cart-sidebar.active {
-            right: 0;
-        }
-
-        .cart-header {
-            padding: 1.5rem;
-            border-bottom: 2px solid #E0E0E0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cart-header h2 {
-            font-size: 1.5rem;
-        }
-
-        .close-cart {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--color-text-light);
-            transition: color 0.3s;
-        }
-
-        .close-cart:hover {
-            color: var(--color-text);
-        }
-
-        .cart-items {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.5rem;
-        }
-
-        .cart-item {
-            display: flex;
-            gap: 1rem;
-            padding: 1rem;
-            border-bottom: 1px solid #E0E0E0;
-        }
-
-        .cart-item-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-        }
-
-        .cart-item-info {
-            flex: 1;
-        }
-
-        .cart-item-name {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .cart-item-price {
-            color: var(--color-primary);
-            font-weight: 600;
-        }
-
-        .cart-item-controls {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .qty-btn {
-            background: var(--color-bg);
-            border: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s;
-        }
-
-        .qty-btn:hover {
-            background: #E0E0E0;
-        }
-
-        .qty-display {
-            min-width: 30px;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        .remove-item {
-            background: none;
-            border: none;
-            color: #E74C3C;
-            cursor: pointer;
-            font-size: 1.2rem;
-            margin-left: auto;
-        }
-
-        .cart-footer {
-            padding: 1.5rem;
-            border-top: 2px solid #E0E0E0;
-            background: var(--color-bg);
-        }
-
-        .cart-total {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .checkout-btn {
-            width: 100%;
-            background: var(--color-success);
-            color: white;
-            border: none;
-            padding: 1rem;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .checkout-btn:hover {
-            background: #27AE60;
-            transform: translateY(-2px);
-        }
-
-        .cart-empty {
-            text-align: center;
-            padding: 3rem 1.5rem;
-            color: var(--color-text-light);
-        }
-
-        .cart-empty-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.3;
-        }
-
-        /* Overlay */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            z-index: 150;
-        }
-
-        .overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--color-text);
-            color: white;
-            padding: 3rem 2rem 1.5rem;
-            margin-top: 4rem;
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-section h3 {
-            margin-bottom: 1rem;
-            color: var(--color-accent);
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section li {
-            margin-bottom: 0.5rem;
-            opacity: 0.8;
-        }
-
-        .footer-section a {
-            color: white;
-            text-decoration: none;
-            transition: opacity 0.3s;
-        }
-
-        .footer-section a:hover {
-            opacity: 1;
-            color: var(--color-accent);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            opacity: 0.7;
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-        }
-
-        @keyframes shimmer {
-            0% {
-                background-position: -1000px 0;
-            }
-            100% {
-                background-position: 1000px 0;
-            }
-        }
-
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            25% {
-                transform: translateY(-10px);
-            }
-            75% {
-                transform: translateY(-5px);
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-container {
-                flex-wrap: wrap;
-                padding: 1rem;
-            }
-
-            .search-bar {
-                order: 3;
-                flex: 1 1 100%;
-                margin-top: 1rem;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .product-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-                gap: 1rem;
-            }
-
-            .cart-sidebar {
-                width: 100%;
-                right: -100%;
-            }
-
-            .filter-container {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .filter-select {
-                width: 100%;
-            }
-        }
-
-        .notification {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--color-success);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            box-shadow: var(--shadow-lg);
-            transform: translateY(150%);
-            transition: transform 0.3s;
-            z-index: 300;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .notification.show {
-            transform: translateY(0);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SensoriPlay — Brinquedos Sensoriais com Propósito Real</title>
+  <meta name="description" content="SensoriPlay reúne produtos sensoriais curados por faixa etária, sentido e objetivo — para famílias e profissionais que querem brincar com intenção.">
+  <meta property="og:title" content="SensoriPlay — Brinquedos Sensoriais com Propósito Real">
+  <meta property="og:description" content="Curadoria de produtos sensoriais para crianças 0-10 anos. Filtros por idade, sentido e objetivo. Descrições técnicas honestas.">
+  <meta property="og:image" content="/assets/sensori-play-logo.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="/assets/sensori-play-logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/design-tokens.css">
+  <link rel="stylesheet" href="/assets/base.css">
+  <link rel="stylesheet" href="/assets/components.css">
+  <style>
+    /* Estilos específicos desta página */
+
+    /* Benefit icon cores alternadas */
+    .benefit-card:nth-child(1) .benefit-icon-wrap { background: var(--teal-soft); }
+    .benefit-card:nth-child(2) .benefit-icon-wrap { background: var(--coral-soft); }
+    .benefit-card:nth-child(3) .benefit-icon-wrap { background: var(--purple-soft); }
+    .benefit-card:nth-child(4) .benefit-icon-wrap { background: var(--yellow-soft); }
+    .benefit-card:nth-child(5) .benefit-icon-wrap { background: var(--teal-soft); }
+
+    /* Grid de benefícios */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--sp-5);
+    }
+
+    /* Grid de steps */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--sp-6);
+    }
+
+    /* Cat grid */
+    .cat-tabs {
+      display: flex;
+      gap: var(--sp-2);
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: var(--sp-6);
+    }
+
+    .cat-tab {
+      padding: 8px 20px;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--border-strong);
+      background: var(--white);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition:
+        background var(--transition-base),
+        border-color var(--transition-base),
+        color var(--transition-base);
+    }
+
+    .cat-tab:hover { background: var(--teal-soft); color: var(--teal); }
+    .cat-tab.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: var(--white);
+    }
+
+    .cat-tab:focus-visible {
+      outline: 3px solid var(--coral);
+      outline-offset: 3px;
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: var(--sp-4);
+    }
+
+    /* Product grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: var(--sp-5);
+    }
+
+    /* Testimonials grid */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--sp-5);
+    }
+
+    /* User panel dropdown */
+    .user-panel {
+      position: fixed;
+      top: 80px;
+      right: var(--sp-5);
+      width: 300px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      box-shadow: var(--shadow-lg);
+      padding: var(--sp-5);
+      z-index: var(--z-dropdown);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition:
+        opacity var(--transition-base),
+        visibility var(--transition-base),
+        transform var(--transition-base);
+    }
+
+    .user-panel.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .user-panel h3 {
+      font-family: var(--f-display);
+      font-size: var(--text-lg);
+      font-weight: 700;
+      margin-bottom: var(--sp-2);
+    }
+
+    .user-panel p {
+      font-size: var(--text-sm);
+      color: var(--muted);
+      margin-bottom: var(--sp-4);
+    }
+
+    .user-panel-btns {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+
+    .user-panel-btns .btn { width: 100%; }
+
+    /* Modal de produto */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(31,27,22,0.6);
+      z-index: var(--z-modal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--sp-5);
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity var(--transition-slow),
+        visibility var(--transition-slow);
+    }
+
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+
+    .modal {
+      background: var(--white);
+      border-radius: var(--r-lg);
+      max-width: 780px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px);
+      transition: transform var(--transition-slow);
+    }
+
+    .modal-overlay.open .modal { transform: translateY(0); }
+
+    .modal-head {
+      display: flex;
+      justify-content: flex-end;
+      padding: var(--sp-4) var(--sp-5) 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--muted);
+      cursor: pointer;
+      line-height: 1;
+      padding: var(--sp-1);
+      border-radius: var(--r-sm);
+      transition: color var(--transition-base), background var(--transition-base);
+    }
+
+    .modal-close:hover { color: var(--ink); background: var(--cream); }
+    .modal-close:focus-visible { outline: 3px solid var(--coral); }
+
+    .modal-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 600px) { .modal-body { grid-template-columns: 1fr; } }
+
+    .modal-img {
+      height: 280px;
+      background: linear-gradient(135deg, var(--teal-soft), var(--coral-soft));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 96px;
+      border-radius: 0 0 0 var(--r-lg);
+    }
+
+    @media (max-width: 600px) { .modal-img { border-radius: 0; height: 200px; } }
+
+    .modal-info { padding: var(--sp-5); }
+
+    .modal-cat {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: var(--sp-2);
+    }
+
+    .modal-name {
+      font-family: var(--f-display);
+      font-size: var(--text-xl);
+      font-weight: 800;
+      line-height: var(--lh-snug);
+      margin-bottom: var(--sp-3);
+    }
+
+    .modal-tags {
+      display: flex;
+      gap: var(--sp-1);
+      flex-wrap: wrap;
+      margin-bottom: var(--sp-4);
+    }
+
+    .modal-price {
+      font-family: var(--f-display);
+      font-size: var(--text-3xl);
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: var(--sp-1);
+    }
+
+    .modal-pix {
+      font-size: var(--text-sm);
+      color: var(--success);
+      font-weight: 600;
+      margin-bottom: var(--sp-5);
+    }
+
+    .modal-desc {
+      font-size: var(--text-sm);
+      color: var(--muted);
+      line-height: var(--lh-relaxed);
+      margin-bottom: var(--sp-5);
+    }
+
+    .modal-add-btn {
+      width: 100%;
+      background: var(--coral);
+      color: var(--white);
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 16px;
+      font-size: var(--text-base);
+      font-weight: 600;
+      font-family: var(--f-body);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-2);
+      transition: background var(--transition-base);
+      margin-bottom: var(--sp-2);
+    }
+
+    .modal-add-btn:hover { background: var(--coral-dark); }
+    .modal-add-btn:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+
+    .modal-secondary-link {
+      display: block;
+      text-align: center;
+      font-size: var(--text-sm);
+      color: var(--teal);
+      text-decoration: underline;
+    }
+
+    .modal-secondary-link:hover { color: var(--ink); }
+
+    /* Toast personalizado */
+    .toast-single {
+      position: fixed;
+      bottom: var(--sp-5);
+      right: var(--sp-5);
+      background: var(--ink);
+      color: var(--white);
+      padding: var(--sp-3) var(--sp-5);
+      border-radius: var(--r-md);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      z-index: var(--z-toast);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform var(--transition-slow), opacity var(--transition-slow);
+      max-width: 360px;
+      pointer-events: none;
+    }
+
+    .toast-single.show { transform: translateY(0); opacity: 1; }
+    .toast-single.success { background: var(--success); }
+    .toast-single.error   { background: var(--error); }
+    .toast-single.info    { background: var(--info); }
+
+    /* Coupon message */
+    .coupon-msg {
+      font-size: var(--text-xs);
+      min-height: 18px;
+      margin-bottom: var(--sp-3);
+    }
+    .coupon-msg.ok  { color: var(--success); }
+    .coupon-msg.err { color: var(--error); }
+
+    /* Cart totals override */
+    .cart-foot .totals { margin-bottom: var(--sp-4); }
+    .cart-foot .total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--text-sm);
+      padding: 4px 0;
+      color: var(--muted);
+    }
+    .cart-foot .total-row.main {
+      font-size: var(--text-base);
+      font-weight: 700;
+      color: var(--ink);
+      padding-top: var(--sp-3);
+      border-top: 1px solid var(--border);
+      margin-top: var(--sp-2);
+    }
+    .cart-foot .total-row.discount { color: var(--success); }
+
+    .checkout-btn {
+      width: 100%;
+      background: var(--coral);
+      color: var(--white);
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 14px;
+      font-size: var(--text-base);
+      font-weight: 600;
+      font-family: var(--f-body);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-2);
+      transition: background var(--transition-base);
+    }
+
+    .checkout-btn:hover { background: var(--coral-dark); }
+    .checkout-btn:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+
+    /* Responsive overrides */
+    @media (max-width: 768px) {
+      .product-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--sp-4); }
+      .product-img-wrap { height: 160px; }
+      .product-img-placeholder { font-size: 52px; }
+      .benefits-grid { grid-template-columns: 1fr; }
+      .steps-grid { gap: var(--sp-4); }
+    }
+
+    @media (max-width: 640px) {
+      .cat-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+      .testimonials-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="nav-container">
-            <div class="logo" onclick="scrollToTop()">
-                <img src="assets/sensori-play-logo.png" alt="Sensori Play - Explorando os sentidos, criando diversão." class="logo-img">
-            </div>
-            <div class="search-bar">
-                <input type="text" class="search-input" id="searchInput" placeholder="Buscar brinquedos sensoriais...">
-                <button class="search-btn" onclick="searchProducts()">🔍</button>
-            </div>
-            <div class="nav-icons">
-                <button class="icon-btn" onclick="toggleUserPanel()">👤</button>
-                <button class="icon-btn">❤️</button>
-                <button class="icon-btn" onclick="toggleCart()">
-                    🛒
-                    <span class="cart-count" id="cartCount">0</span>
-                </button>
-            </div>
-        </nav>
-    </header>
 
-    <!-- User Panel -->
-    <div class="user-panel" id="userPanel">
-        <h3>Área do cliente</h3>
-        <p>Em breve você poderá fazer login, acompanhar pedidos e salvar favoritos.</p>
-        <div class="user-actions">
-            <button class="primary" onclick="showNotification('Login será habilitado em breve!')">Entrar</button>
-            <button onclick="showNotification('Cadastro será habilitado em breve!')">Criar conta</button>
-        </div>
+<!-- Skip link de acessibilidade -->
+<a href="#main-content" class="skip-link">Ir para o conteúdo principal</a>
+
+<!-- ══ BARRA DE OFERTA ══════════════════════════════════════════════ -->
+<div class="shipping-bar" role="banner" aria-label="Oferta especial">
+  Frete <strong>grátis</strong> para todo o Brasil em compras acima de <strong>R$&nbsp;199</strong>
+  &nbsp;&bull;&nbsp;
+  Cupom de boas-vindas: <strong>BEMVINDO10</strong> (10% off acima de R$100)
+</div>
+
+<!-- ══ HEADER ══════════════════════════════════════════════════════════ -->
+<header class="site-header" id="site-header">
+  <nav class="nav-top" aria-label="Navegação principal">
+    <a href="/" class="logo-link" aria-label="SensoriPlay — página inicial">
+      <img src="/assets/sensori-play-logo.png" alt="SensoriPlay" class="logo-img">
+    </a>
+
+    <div class="search-wrap" role="search">
+      <label for="searchInput" class="sr-only">Buscar produtos</label>
+      <input
+        type="search"
+        class="search-input"
+        id="searchInput"
+        placeholder="Buscar por nome, sentido, faixa etária..."
+        autocomplete="off"
+        aria-label="Buscar produtos no catálogo"
+      >
+      <button class="search-btn" onclick="doSearch()" aria-label="Executar busca">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </button>
     </div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Explorando os sentidos, criando diversão.</h1>
-            <p>Brinquedos educativos impressos em 3D que estimulam os sentidos e promovem o aprendizado das crianças.</p>
-            <button class="cta-btn" onclick="scrollToProducts()">Explorar Produtos</button>
-        </div>
-    </section>
+    <div class="nav-actions">
+      <button class="nav-icon-btn" onclick="toggleUserPanel()" aria-label="Minha conta" aria-expanded="false" id="accountBtn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span class="nav-icon-label hide-mobile">Conta</span>
+      </button>
+      <button class="nav-icon-btn" onclick="openCart()" aria-label="Abrir carrinho" id="cartBtn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <span class="nav-icon-label hide-mobile">Carrinho</span>
+        <span class="cart-badge" id="cartBadge" style="display:none" aria-live="polite" aria-label="itens no carrinho">0</span>
+      </button>
+    </div>
+  </nav>
 
-    <!-- Filter Bar -->
-    <div class="filter-bar">
-        <div class="filter-container">
-            <span class="filter-label">Filtrar por:</span>
-            <select class="filter-select" id="categoryFilter" onchange="filterProducts()">
-                <option value="all">Todas Categorias</option>
-                <option value="sensorial">Sensorial</option>
-                <option value="cognitivo">Cognitivo</option>
-                <option value="motor">Motor</option>
-                <option value="criativo">Criativo</option>
-            </select>
-            <select class="filter-select" id="ageFilter" onchange="filterProducts()">
-                <option value="all">Todas Idades</option>
-                <option value="0-2">0-2 anos</option>
-                <option value="3-5">3-5 anos</option>
-                <option value="6-8">6-8 anos</option>
-                <option value="9+">9+ anos</option>
-            </select>
-            <select class="filter-select" id="sortFilter" onchange="filterProducts()">
-                <option value="featured">Destaques</option>
-                <option value="price-low">Menor Preço</option>
-                <option value="price-high">Maior Preço</option>
-                <option value="newest">Mais Recentes</option>
-            </select>
+  <!-- Categorias rápidas -->
+  <nav class="nav-cats" aria-label="Filtro rápido por categoria">
+    <div class="nav-cats-inner">
+      <a href="#vitrine" class="nav-cat-link" onclick="setFilter('age','all')">Todos</a>
+      <a href="#vitrine" class="nav-cat-link" onclick="setFilter('age','0-12m')">0-12 meses</a>
+      <a href="#vitrine" class="nav-cat-link" onclick="setFilter('age','1+')">1-3 anos</a>
+      <a href="#vitrine" class="nav-cat-link" onclick="setFilter('age','3+')">3-5 anos</a>
+      <a href="#vitrine" class="nav-cat-link" onclick="setFilter('age','6+')">6+ anos</a>
+      <a href="#vitrine" class="nav-cat-link" onclick="setFilter('category','Fidget')">Fidgets</a>
+      <a href="#vitrine" class="nav-cat-link" onclick="setFilter('category','Ponderado')">Ponderados</a>
+      <a href="#vitrine" class="nav-cat-link" onclick="setFilter('category','Bundle')">Kits</a>
+      <a href="/pages/sobre.html" class="nav-cat-link">Sobre</a>
+      <a href="/pages/faq.html" class="nav-cat-link">FAQ</a>
+    </div>
+  </nav>
+</header>
+
+<!-- ══ PAINEL DE CONTA ════════════════════════════════════════════════ -->
+<div class="user-panel" id="userPanel" role="dialog" aria-label="Painel da conta" aria-modal="true">
+  <h3>Minha conta</h3>
+  <p id="userPanelSubtitle">Faça login para acompanhar seus pedidos e acessar ofertas exclusivas.</p>
+  <div class="user-panel-btns" id="userPanelBtns">
+    <a href="/auth/" class="btn btn-primary">Entrar</a>
+    <a href="/auth/" class="btn btn-secondary">Criar conta</a>
+  </div>
+</div>
+
+<!-- ══ CONTEÚDO PRINCIPAL ════════════════════════════════════════════ -->
+<main id="main-content">
+
+<!-- ══ HERO ══════════════════════════════════════════════════════════ -->
+<section class="hero" aria-labelledby="hero-heading">
+  <div class="hero-inner">
+    <div class="hero-eyebrow" aria-hidden="true">Curadoria especializada em desenvolvimento sensorial</div>
+    <h1 id="hero-heading">
+      Cada sentido que desperta abre uma <em>porta no cérebro.</em>
+    </h1>
+    <p>
+      SensoriPlay reúne produtos sensoriais com propósito real — para famílias que querem
+      brincar com intenção e profissionais que precisam de curadoria confiável.
+    </p>
+    <div class="hero-ctas">
+      <a href="#vitrine" class="btn btn-primary btn-lg">Explorar produtos</a>
+      <a href="#categorias" class="btn btn-secondary btn-lg">Ver por faixa etária</a>
+    </div>
+    <div class="hero-trust-row" role="list" aria-label="Diferenciais">
+      <div class="hero-trust-item" role="listitem">
+        <span class="icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        Certificado INMETRO
+      </div>
+      <div class="hero-trust-item" role="listitem">
+        <span class="icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </span>
+        7 dias para devolução
+      </div>
+      <div class="hero-trust-item" role="listitem">
+        <span class="icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </span>
+        Envio nacional
+      </div>
+      <div class="hero-trust-item" role="listitem">
+        <span class="icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </span>
+        Curadoria por TOs
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BENEFÍCIOS ════════════════════════════════════════════════════ -->
+<section class="section section-white" id="beneficios" aria-labelledby="benefits-heading">
+  <div class="container">
+    <div class="section-heading">
+      <h2 id="benefits-heading">Por que escolher a SensoriPlay</h2>
+      <p>Cada produto é curado com critério técnico e honestidade. Não vendemos brinquedos genéricos.</p>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon-wrap" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
+        <h3>Curadoria por faixa etária e sentido</h3>
+        <p>Cada produto é mapeado pela janela de desenvolvimento em que mais impacta — você encontra o certo para onde sua criança está agora, não para a criança média.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon-wrap" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h3>Vocabulário honesto, sem promessas vazias</h3>
+        <p>Descrevemos o que o produto faz e como — sem "estimula todo o desenvolvimento". Respeito pela sua inteligência como comprador.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon-wrap" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.64 12.88 19.79 19.79 0 0 1 1.6 4.28 2 2 0 0 1 3.57 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.91-.82a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <h3>Linha profissional para terapeutas</h3>
+        <p>Pedidos para consultório, escola ou clínica com nota fiscal e curadoria voltada para uso terapêutico. Sem burocracia.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon-wrap" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h3>Segurança documentada</h3>
+        <p>Todos os produtos passam por verificação de certificação INMETRO ou equivalente internacional. Sem importado genérico sem laudo.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon-wrap" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <h3>Conteúdo que acompanha o produto</h3>
+        <p>Cada compra inclui guia de uso — como introduzir, quando usar, sinais de que a criança está respondendo bem.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COMO FUNCIONA ═════════════════════════════════════════════════ -->
+<section class="section" id="como-funciona" aria-labelledby="steps-heading">
+  <div class="container">
+    <div class="section-heading">
+      <h2 id="steps-heading">Como funciona</h2>
+      <p>Três passos para encontrar o produto certo para a fase certa.</p>
+    </div>
+    <div class="steps-grid" role="list">
+      <div class="step-card" role="listitem">
+        <div class="step-number" aria-hidden="true">1</div>
+        <h3>Encontre pelo que faz sentido para você</h3>
+        <p>Filtre por faixa etária, sentido que quer estimular ou condição específica. Cada filtro foi desenhado para o pai leigo e para o profissional.</p>
+      </div>
+      <div class="step-card" role="listitem">
+        <div class="step-number" aria-hidden="true">2</div>
+        <h3>Leia o que realmente importa</h3>
+        <p>Cada produto tem descrição técnica clara, sentidos estimulados, faixa etária validada, materiais e certificações. Não é papo de marketing — é dado.</p>
+      </div>
+      <div class="step-card" role="listitem">
+        <div class="step-number" aria-hidden="true">3</div>
+        <h3>Receba e explore junto</h3>
+        <p>Entrega para todo o Brasil. Junto com o produto, você recebe guia de introdução e suporte — porque dúvida não termina na entrega.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CATEGORIAS ════════════════════════════════════════════════════ -->
+<section class="section section-white" id="categorias" aria-labelledby="cats-heading">
+  <div class="container">
+    <div class="section-heading">
+      <h2 id="cats-heading">Navegue como preferir</h2>
+      <p>Por idade, por sentido ou por objetivo — os filtros existem para você chegar ao produto certo sem precisar garimpar.</p>
     </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <h2 class="section-title">Produtos em Destaque</h2>
-        <div class="product-grid" id="productGrid"></div>
-    </main>
-
-    <!-- Features Section -->
-    <section class="features">
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🎯</div>
-                <h3 class="feature-title">Desenvolvimento Sensorial</h3>
-                <p class="feature-text">Estimula os sentidos tátil, visual e auditivo das crianças.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">♻️</div>
-                <h3 class="feature-title">Sustentável</h3>
-                <p class="feature-text">Impressão 3D com materiais PLA biodegradáveis.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔒</div>
-                <h3 class="feature-title">Seguro</h3>
-                <p class="feature-text">Produtos testados e seguros para todas as idades.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🚚</div>
-                <h3 class="feature-title">Entrega Rápida</h3>
-                <p class="feature-text">Envio para todo Brasil com rastreamento.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Cart Sidebar -->
-    <div class="cart-sidebar" id="cartSidebar">
-        <div class="cart-header">
-            <h2>Carrinho</h2>
-            <button class="close-cart" onclick="toggleCart()">✕</button>
-        </div>
-        <div class="cart-items" id="cartItems"></div>
-        <div class="cart-footer">
-            <div class="cart-total">
-                <span>Total:</span>
-                <span id="cartTotal">R$ 0,00</span>
-            </div>
-            <button class="checkout-btn" onclick="checkout()">Finalizar Compra</button>
-        </div>
+    <div class="cat-tabs" role="tablist" aria-label="Grupos de categoria">
+      <button class="cat-tab active" role="tab" aria-selected="true" onclick="showCatGroup(event,'age')">Por Idade</button>
+      <button class="cat-tab" role="tab" aria-selected="false" onclick="showCatGroup(event,'sense')">Por Sentido</button>
+      <button class="cat-tab" role="tab" aria-selected="false" onclick="showCatGroup(event,'goal')">Por Objetivo</button>
     </div>
 
-    <!-- Overlay -->
-    <div class="overlay" id="overlay"></div>
+    <div class="cat-grid" id="catGrid" role="list">
+      <!-- Preenchido via JS -->
+    </div>
+  </div>
+</section>
 
-    <!-- Notification -->
-    <div class="notification" id="notification">
-        <span>✓</span>
-        <span id="notificationText">Produto adicionado ao carrinho!</span>
+<!-- ══ VITRINE ═══════════════════════════════════════════════════════ -->
+<section class="section" id="vitrine" aria-labelledby="vitrine-heading">
+  <div class="container">
+    <div class="section-heading">
+      <h2 id="vitrine-heading">Catálogo</h2>
+      <p>18 produtos curados — do brinquedo de entrada ao kit completo para sala calma.</p>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Sensori Play</h3>
-                <p>Explorando os sentidos, criando diversão.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Links Rápidos</h3>
-                <ul>
-                    <li><a href="#sobre">Sobre Nós</a></li>
-                    <li><a href="#produtos">Produtos</a></li>
-                    <li><a href="#blog">Blog Educativo</a></li>
-                    <li><a href="#contato">Contato</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Atendimento</h3>
-                <ul>
-                    <li><a href="#faq">Perguntas Frequentes</a></li>
-                    <li><a href="#envio">Envio e Entrega</a></li>
-                    <li><a href="#trocas">Trocas e Devoluções</a></li>
-                    <li><a href="#garantia">Garantia</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contato</h3>
-                <ul>
-                    <li>📧 contato@sensoriplay.com.br</li>
-                    <li>📱 (11) 99999-9999</li>
-                    <li>📍 São Paulo, SP</li>
-                </ul>
-            </div>
+    <div class="filter-row" role="group" aria-label="Filtros de produto">
+      <span class="filter-label" id="filter-label">Filtrar:</span>
+      <label for="filterAge" class="sr-only">Faixa etária</label>
+      <select class="filter-select" id="filterAge" onchange="applyFilters()" aria-labelledby="filter-label">
+        <option value="all">Toda faixa etária</option>
+        <option value="0-12m">0-12 meses</option>
+        <option value="1+">1+ anos</option>
+        <option value="2+">2+ anos</option>
+        <option value="3+">3+ anos</option>
+        <option value="4+">4+ anos</option>
+        <option value="5+">5+ anos</option>
+        <option value="6+">6+ anos</option>
+        <option value="3-10">3-10 anos</option>
+      </select>
+      <label for="filterCat" class="sr-only">Categoria</label>
+      <select class="filter-select" id="filterCat" onchange="applyFilters()">
+        <option value="all">Todas as categorias</option>
+        <option value="Fidget">Fidgets</option>
+        <option value="Tato">Tato</option>
+        <option value="Abafador">Abafadores</option>
+        <option value="Mastigavel">Mastigaveis</option>
+        <option value="Luminoso">Luminosos</option>
+        <option value="Musical">Musical/Auditivo</option>
+        <option value="Ponderado">Ponderados</option>
+        <option value="Vestibular">Vestibular</option>
+        <option value="Bebê">Bebe</option>
+        <option value="Motricidade">Motricidade</option>
+        <option value="Cognicao">Cognicao</option>
+        <option value="Bundle">Kits e Bundles</option>
+      </select>
+      <label for="filterSort" class="sr-only">Ordenar por</label>
+      <select class="filter-select" id="filterSort" onchange="applyFilters()">
+        <option value="featured">Destaques primeiro</option>
+        <option value="price-asc">Menor preco</option>
+        <option value="price-desc">Maior preco</option>
+        <option value="name">A-Z</option>
+      </select>
+      <span class="filter-count" id="filterCount" aria-live="polite" aria-label="Resultados"></span>
+    </div>
+
+    <div class="product-grid" id="productGrid" role="list" aria-label="Produtos">
+      <!-- Preenchido via JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ══ DEPOIMENTOS ═══════════════════════════════════════════════════ -->
+<section class="section section-white" id="depoimentos" aria-labelledby="dep-heading">
+  <div class="container">
+    <div class="section-heading">
+      <h2 id="dep-heading">O que dizem quem ja comprou</h2>
+    </div>
+    <div class="testimonials-grid">
+      <article class="testimonial-card">
+        <div class="testimonial-stars" aria-label="5 estrelas" role="img">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <blockquote class="testimonial-text">
+          "Eu nao sabia por onde comecar. Meu filho tem 2 anos e eu queria brinquedos que fizessem sentido, nao so entretenimento.
+          No SensoriPlay o filtro por faixa etaria me ajudou a escolher sem culpa. O kit chegou com um guia de uso que me surpreendeu
+          — aprendi mais sobre o desenvolvimento dele em 10 minutos de leitura do que em meses de pesquisa no Google."
+        </blockquote>
+        <footer class="testimonial-author">
+          <div class="testimonial-avatar" aria-hidden="true">C</div>
+          <div>
+            <div class="testimonial-name">Camila R.</div>
+            <div class="testimonial-role">Mae do Theo, 2 anos — Sao Paulo</div>
+          </div>
+        </footer>
+      </article>
+      <article class="testimonial-card">
+        <div class="testimonial-stars" aria-label="5 estrelas" role="img">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <blockquote class="testimonial-text">
+          "Eu precisava de uma fonte de produtos sensoriais para indicar as familias dos meus pacientes.
+          O SensoriPlay tem descricao tecnica real — consigo verificar o estimulo, o material e a faixa antes de recomendar.
+          Ja indiquei para cinco familias e nao tive devolucao por inadequacao nenhuma."
+        </blockquote>
+        <footer class="testimonial-author">
+          <div class="testimonial-avatar" aria-hidden="true">F</div>
+          <div>
+            <div class="testimonial-name">Dra. Fernanda M.</div>
+            <div class="testimonial-role">Terapeuta Ocupacional, CREFITO-SP — Campinas</div>
+          </div>
+        </footer>
+      </article>
+      <article class="testimonial-card">
+        <div class="testimonial-stars" aria-label="5 estrelas" role="img">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <blockquote class="testimonial-text">
+          "Meu filho tem TDAH e qualquer presente virava frustracao. Aqui eu filtrei por 'TDAH + foco + 5 a 7 anos'
+          e encontrei dois produtos que ele usa ate hoje, seis meses depois.
+          Isso nao acontecia com mais nenhuma compra que eu ja fiz."
+        </blockquote>
+        <footer class="testimonial-author">
+          <div class="testimonial-avatar" aria-hidden="true">R</div>
+          <div>
+            <div class="testimonial-name">Rafael S.</div>
+            <div class="testimonial-role">Pai do Davi, 6 anos — Curitiba</div>
+          </div>
+        </footer>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ PREVIEW ═══════════════════════════════════════════════════ -->
+<section class="section" id="faq-preview" aria-labelledby="faq-heading">
+  <div class="container">
+    <div class="section-heading">
+      <h2 id="faq-heading">Perguntas frequentes</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          Os produtos sao seguros para criancas com menos de 3 anos?
+          <span class="faq-chevron" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </button>
+        <div class="faq-a" role="region">
+          Sim, desde que voce escolha produtos marcados como "0-36 meses" no filtro de faixa etaria.
+          Esses itens passam por verificacao adicional de ausencia de pecas pequenas e materiais atoxicos,
+          com certificacao INMETRO ou equivalente. A faixa etaria indicada nao e sugestao — e criterio de seguranca.
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Sensori Play. Todos os direitos reservados.</p>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          Voces tem produtos indicados para criancas com autismo (TEA)?
+          <span class="faq-chevron" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </button>
+        <div class="faq-a" role="region">
+          Temos produtos indicados para apoio sensorial em criancas com TEA, mas a maioria beneficia criancas
+          neurodivergentes e de desenvolvimento tipico. O que muda e a intencao de uso. Em cada produto, indicamos
+          se o item e mais adequado para hipossensibilidade, hipersensibilidade ou uso geral.
         </div>
-    </footer>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          Como funciona o frete e a entrega?
+          <span class="faq-chevron" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </button>
+        <div class="faq-a" role="region">
+          Frete gratis para compras acima de R$199 para todo o Brasil. Abaixo desse valor, R$19,90 fixo.
+          Trabalhamos com Correios (PAC e Sedex). Para capitais, o prazo medio e de 3 a 7 dias uteis.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          Posso parcelar a compra?
+          <span class="faq-chevron" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </button>
+        <div class="faq-a" role="region">
+          Sim. Aceitamos cartao de credito em ate 6x sem juros para compras acima de R$150,
+          e em ate 12x com juros da operadora. Pix e boleto tem desconto de 5%.
+          Processamos via Mercado Pago — ambiente seguro e familiar para a maioria dos compradores.
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:var(--sp-7)">
+      <a href="/pages/faq.html" class="btn btn-secondary">Ver todas as perguntas</a>
+    </div>
+  </div>
+</section>
 
-    <script>
-        const API_BASE = 'http://127.0.0.1:8000'; // ajustar para o domínio da API em produção
+</main><!-- /main-content -->
 
-        const FALLBACK_PRODUCTS = [
-            {
-                id: 1,
-                name: 'Cubo Sensorial Fidget',
-                category: 'sensorial',
-                price: 45.90,
-                age: '3-5',
-                description: 'Cubo multi-textura com diferentes estímulos táteis',
-                emoji: '🎲',
-                badge: 'Novo',
-                featured: true
-            },
-            {
-                id: 2,
-                name: 'Quebra-Cabeça 3D Animais',
-                category: 'cognitivo',
-                price: 62.90,
-                age: '6-8',
-                description: 'Quebra-cabeça tridimensional para desenvolvimento cognitivo',
-                emoji: '🦁',
-                badge: 'Destaque',
-                featured: true
-            },
-            {
-                id: 3,
-                name: 'Spinner Tátil Premium',
-                category: 'sensorial',
-                price: 38.90,
-                age: '6-8',
-                description: 'Spinner com diferentes texturas para alívio de ansiedade',
-                emoji: '🌀',
-                badge: '',
-                featured: true
-            },
-            {
-                id: 4,
-                name: 'Torre de Empilhar Colorida',
-                category: 'motor',
-                price: 54.90,
-                age: '0-2',
-                description: 'Desenvolve coordenação motora e reconhecimento de cores',
-                emoji: '🏗️',
-                badge: 'Mais Vendido',
-                featured: true
-            },
-            {
-                id: 5,
-                name: 'Kit Formas Geométricas',
-                category: 'cognitivo',
-                price: 49.90,
-                age: '3-5',
-                description: 'Conjunto de formas para aprendizado de geometria',
-                emoji: '🔷',
-                badge: '',
-                featured: true
-            },
-            {
-                id: 6,
-                name: 'Bola Sensorial Texturizada',
-                category: 'sensorial',
-                price: 42.90,
-                age: '0-2',
-                description: 'Bola com relevos para estimulação sensorial',
-                emoji: '⚽',
-                badge: 'Novo',
-                featured: true
-            },
-            {
-                id: 7,
-                name: 'Labirinto de Coordenação',
-                category: 'motor',
-                price: 58.90,
-                age: '6-8',
-                description: 'Desafio de coordenação motora fina',
-                emoji: '🎯',
-                badge: '',
-                featured: false
-            },
-            {
-                id: 8,
-                name: 'Conjunto Massinha Modelar 3D',
-                category: 'criativo',
-                price: 67.90,
-                age: '3-5',
-                description: 'Formas e moldes para criatividade tridimensional',
-                emoji: '🎨',
-                badge: 'Destaque',
-                featured: true
-            },
-            {
-                id: 9,
-                name: 'Engrenagens Coloridas',
-                category: 'cognitivo',
-                price: 71.90,
-                age: '6-8',
-                description: 'Sistema de engrenagens para entender mecânica básica',
-                emoji: '⚙️',
-                badge: '',
-                featured: false
-            },
-            {
-                id: 10,
-                name: 'Túnel Sensorial Tátil',
-                category: 'sensorial',
-                price: 89.90,
-                age: '3-5',
-                description: 'Túnel com diferentes texturas para exploração sensorial',
-                emoji: '🌈',
-                badge: 'Premium',
-                featured: true
-            },
-            {
-                id: 11,
-                name: 'Blocos de Encaixe Magnéticos',
-                category: 'motor',
-                price: 95.90,
-                age: '6-8',
-                description: 'Blocos com conexão magnética para construção livre',
-                emoji: '🧲',
-                badge: 'Mais Vendido',
-                featured: true
-            },
-            {
-                id: 12,
-                name: 'Instrumentos Musicais Mini',
-                category: 'criativo',
-                price: 52.90,
-                age: '3-5',
-                description: 'Conjunto de mini instrumentos para estimulação auditiva',
-                emoji: '🎵',
-                badge: '',
-                featured: false
-            }
-        ];
+<!-- ══ FOOTER ════════════════════════════════════════════════════════ -->
+<footer class="site-footer" aria-label="Rodape">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="/assets/sensori-play-logo.png" alt="SensoriPlay" class="footer-logo">
+        <p class="footer-tagline">
+          SensoriPlay e onde ciencia do desenvolvimento encontra o prazer de brincar
+          — o e-commerce brasileiro especializado em produtos sensoriais.
+        </p>
+        <div style="margin-bottom:var(--sp-4)">
+          <p style="font-size:var(--text-xs);color:var(--muted);margin-bottom:var(--sp-2)">Receba novidades e guias de desenvolvimento:</p>
+          <form class="newsletter-form" onsubmit="handleNewsletter(event)" aria-label="Inscricao na newsletter">
+            <label for="newsletter-email" class="sr-only">Seu e-mail</label>
+            <input type="email" id="newsletter-email" class="newsletter-input" placeholder="seu@email.com" required autocomplete="email">
+            <button type="submit" class="newsletter-btn">Inscrever</button>
+          </form>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Produtos</div>
+        <ul class="footer-links">
+          <li><a href="#vitrine" class="footer-link" onclick="setFilter('category','Fidget')">Fidgets</a></li>
+          <li><a href="#vitrine" class="footer-link" onclick="setFilter('category','Ponderado')">Ponderados</a></li>
+          <li><a href="#vitrine" class="footer-link" onclick="setFilter('category','Bundle')">Kits e Bundles</a></li>
+          <li><a href="#vitrine" class="footer-link" onclick="setFilter('age','0-12m')">Bebes 0-12m</a></li>
+          <li><a href="#vitrine" class="footer-link" onclick="setFilter('age','3+')">3+ anos</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Atendimento</div>
+        <ul class="footer-links">
+          <li><a href="/pages/faq.html" class="footer-link">Perguntas frequentes</a></li>
+          <li><a href="/pages/envio.html" class="footer-link">Envio e entrega</a></li>
+          <li><a href="/pages/trocas.html" class="footer-link">Trocas e devolucoes</a></li>
+          <li><a href="/pages/garantia.html" class="footer-link">Garantia</a></li>
+          <li><a href="/pages/contato.html" class="footer-link">Fale conosco</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Empresa</div>
+        <ul class="footer-links">
+          <li><a href="/pages/sobre.html" class="footer-link">Nossa historia</a></li>
+          <li><a href="/auth/" class="footer-link">Minha conta</a></li>
+          <li><a href="mailto:contato@sensoriplay.com.br" class="footer-link">contato@sensoriplay.com.br</a></li>
+        </ul>
+      </div>
+    </div>
 
-        let products = [];
-        let cart = [];
-        let filteredProducts = [];
+    <div class="footer-bottom">
+      <div class="footer-seals" role="list" aria-label="Selos de seguranca">
+        <div class="footer-seal" role="listitem">
+          <span class="seal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          SSL seguro
+        </div>
+        <div class="footer-seal" role="listitem">
+          <span class="seal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </span>
+          Mercado Pago
+        </div>
+        <div class="footer-seal" role="listitem">
+          <span class="seal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          INMETRO
+        </div>
+      </div>
+      <p class="footer-copyright">
+        &copy; 2026 SensoriPlay. Os produtos nao substituem avaliacao profissional de saude.
+      </p>
+    </div>
+  </div>
+</footer>
 
-        async function loadProducts() {
-            try {
-                const response = await fetch(`${API_BASE}/products`);
-                if (!response.ok) {
-                    throw new Error('Erro ao buscar produtos da API');
-                }
-                const data = await response.json();
-                // Backend retorna age_range, aqui mapeamos para age usado no front
-                products = data.map(p => ({
-                    id: p.id,
-                    name: p.name,
-                    category: p.category,
-                    price: p.price,
-                    age: p.age_range || '3-5',
-                    description: p.description,
-                    emoji: p.emoji || '🎁',
-                    badge: p.badge,
-                    featured: p.featured
-                }));
-            } catch (err) {
-                console.warn('Usando produtos mockados (fallback):', err.message);
-                products = [...FALLBACK_PRODUCTS];
-            }
+<!-- ══ OVERLAY ═══════════════════════════════════════════════════════ -->
+<div class="overlay" id="overlay" onclick="closeAll()" aria-hidden="true"></div>
 
-            filteredProducts = [...products];
-            renderProducts();
-        }
+<!-- ══ CART SIDEBAR ══════════════════════════════════════════════════ -->
+<aside class="cart-sidebar" id="cartSidebar" role="dialog" aria-label="Carrinho de compras" aria-modal="true">
+  <div class="cart-head">
+    <h2>Carrinho</h2>
+    <button class="cart-close" onclick="closeCart()" aria-label="Fechar carrinho">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="cart-body" id="cartBody"></div>
+  <div class="cart-foot" id="cartFoot" style="display:none">
+    <div class="shipping-progress-wrap">
+      <p class="shipping-progress-label" id="shippingText">Adicione mais produtos para frete gratis</p>
+      <div class="progress-track">
+        <div class="progress-fill" id="shippingFill" style="width:0%" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+    </div>
+    <div class="coupon-row">
+      <label for="couponInput" class="sr-only">Codigo de cupom</label>
+      <input type="text" class="coupon-input" id="couponInput" placeholder="CUPOM" maxlength="20" aria-label="Codigo de cupom">
+      <button class="coupon-btn" onclick="applyCoupon()">Aplicar</button>
+    </div>
+    <div class="coupon-msg" id="couponMsg" aria-live="polite"></div>
+    <div class="totals">
+      <div class="total-row"><span>Subtotal</span><span id="totalSubtotal">R$ 0,00</span></div>
+      <div class="total-row discount" id="discountRow" style="display:none"><span>Desconto (cupom)</span><span id="totalDiscount">- R$ 0,00</span></div>
+      <div class="total-row"><span>Frete</span><span id="totalShipping">R$ 19,90</span></div>
+      <div class="total-row main"><span>Total</span><span id="totalFinal">R$ 0,00</span></div>
+    </div>
+    <p class="pix-note">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      Pague com Pix e ganhe 5% de desconto
+    </p>
+    <button class="checkout-btn" onclick="goCheckout()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Finalizar compra
+    </button>
+  </div>
+</aside>
 
-        function renderProducts() {
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = '';
+<!-- ══ MODAL PRODUTO ════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="productModal" onclick="closeModalOnBg(event)" role="dialog" aria-label="Detalhe do produto" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <button class="modal-close" onclick="closeModal()" aria-label="Fechar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-img" id="modalImg" aria-hidden="true"></div>
+      <div class="modal-info">
+        <div class="modal-cat" id="modalCat"></div>
+        <h2 class="modal-name" id="modalName"></h2>
+        <div class="modal-tags" id="modalTags"></div>
+        <div class="modal-price" id="modalPrice"></div>
+        <div class="modal-pix" id="modalPix"></div>
+        <p class="modal-desc" id="modalDesc"></p>
+        <button class="modal-add-btn" id="modalAddBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          Adicionar ao carrinho
+        </button>
+        <a href="/pages/produto.html" class="modal-secondary-link" id="modalDetailLink">Ver pagina completa do produto</a>
+      </div>
+    </div>
+  </div>
+</div>
 
-            filteredProducts.forEach(product => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.innerHTML = `
-                    ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
-                    <div class="product-image">${product.emoji}</div>
-                    <div class="product-info">
-                        <div class="product-category">${getCategoryName(product.category)}</div>
-                        <h3 class="product-name">${product.name}</h3>
-                        <p class="product-description">${product.description}</p>
-                        <div class="product-age">${product.age} anos</div>
-                        <div class="product-footer">
-                            <div class="product-price">R$ ${product.price.toFixed(2).replace('.', ',')}</div>
-                            <button class="add-to-cart" onclick="addToCart(${product.id})">
-                                <span>🛒</span>
-                                <span>Adicionar</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
+<!-- ══ TOAST ═════════════════════════════════════════════════════════ -->
+<div class="toast-single" id="toast" role="alert" aria-live="assertive" aria-atomic="true"></div>
 
-        function getCategoryName(category) {
-            const names = {
-                'sensorial': 'Sensorial',
-                'cognitivo': 'Cognitivo',
-                'motor': 'Motor',
-                'criativo': 'Criativo'
-            };
-            return names[category] || category;
-        }
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   CONFIGURACAO
+═══════════════════════════════════════════════════════════════ */
+const API_BASE      = '';
+const SHIPPING_FREE = 199;
+const SHIPPING_FLAT = 19.90;
 
-        function filterProducts() {
-            const categoryFilter = document.getElementById('categoryFilter').value;
-            const ageFilter = document.getElementById('ageFilter').value;
-            const sortFilter = document.getElementById('sortFilter').value;
+/* ═══════════════════════════════════════════════════════════════
+   ESTADO GLOBAL
+═══════════════════════════════════════════════════════════════ */
+let allProducts    = [];
+let filteredProds  = [];
+let cart           = JSON.parse(localStorage.getItem('sensori_cart') || '[]');
+let appliedCoupon  = null;
+let currentProductId = null;
+let searchDebounce = null;
 
-            filteredProducts = products.filter(product => {
-                const categoryMatch = categoryFilter === 'all' || product.category === categoryFilter;
-                const ageMatch = ageFilter === 'all' || product.age === ageFilter;
-                return categoryMatch && ageMatch;
-            });
+/* ═══════════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  loadProducts();
+  renderCartUI();
+  renderCategoryGrid('age');
+  checkAuthState();
+  initScrollHeader();
 
-            if (sortFilter === 'price-low') {
-                filteredProducts.sort((a, b) => a.price - b.price);
-            } else if (sortFilter === 'price-high') {
-                filteredProducts.sort((a, b) => b.price - a.price);
-            } else if (sortFilter === 'featured') {
-                filteredProducts.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
-            }
+  const searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(doSearch, 350);
+  });
 
-            renderProducts();
-        }
+  // Fechar modal com Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeAll();
+      closeModal();
+    }
+  });
+});
 
-        function searchProducts() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            filteredProducts = products.filter(product => 
-                product.name.toLowerCase().includes(searchTerm) ||
-                product.description.toLowerCase().includes(searchTerm)
-            );
-            renderProducts();
-        }
+function initScrollHeader() {
+  const header = document.getElementById('site-header');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+}
 
-        document.getElementById('searchInput').addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
-                searchProducts();
-            }
-        });
+/* ═══════════════════════════════════════════════════════════════
+   PRODUTOS
+═══════════════════════════════════════════════════════════════ */
+async function loadProducts() {
+  try {
+    const r = await fetch(`${API_BASE}/products`);
+    if (!r.ok) throw new Error('API indisponivel');
+    const data = await r.json();
+    allProducts = data.map(p => ({
+      id:          p.id,
+      name:        p.name,
+      category:    p.category,
+      price:       parseFloat(p.price),
+      age:         p.age_range || '3+',
+      description: p.description || '',
+      emoji:       p.emoji || '🎁',
+      badge:       p.badge || null,
+      featured:    p.featured || false,
+      stock:       p.stock || 0,
+    }));
+  } catch {
+    showToast('Carregando catalogo...', 'info');
+  }
+  applyFilters();
+}
 
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            const existingItem = cart.find(item => item.id === productId);
+/* ═══════════════════════════════════════════════════════════════
+   FILTROS
+═══════════════════════════════════════════════════════════════ */
+function applyFilters() {
+  const age  = document.getElementById('filterAge')?.value  || 'all';
+  const cat  = document.getElementById('filterCat')?.value  || 'all';
+  const sort = document.getElementById('filterSort')?.value || 'featured';
+  const q    = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
 
-            if (existingItem) {
-                existingItem.quantity++;
-            } else {
-                cart.push({ ...product, quantity: 1 });
-            }
+  filteredProds = allProducts.filter(p => {
+    const ageOk = age === 'all' || p.age === age;
+    const catOk = cat === 'all' || p.category === cat;
+    const qOk   = !q ||
+      p.name.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q);
+    return ageOk && catOk && qOk;
+  });
 
-            updateCart();
-            showNotification(`${product.name} adicionado ao carrinho!`);
-        }
+  if (sort === 'price-asc')  filteredProds.sort((a,b) => a.price - b.price);
+  else if (sort === 'price-desc') filteredProds.sort((a,b) => b.price - a.price);
+  else if (sort === 'name')  filteredProds.sort((a,b) => a.name.localeCompare(b.name, 'pt'));
+  else filteredProds.sort((a,b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
 
-        function updateCart() {
-            const cartCount = document.getElementById('cartCount');
-            const cartItems = document.getElementById('cartItems');
-            const cartTotal = document.getElementById('cartTotal');
+  renderProducts();
+  const fc = document.getElementById('filterCount');
+  if (fc) fc.textContent = `${filteredProds.length} produto${filteredProds.length !== 1 ? 's' : ''}`;
+}
 
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            cartCount.textContent = totalItems;
+function setFilter(type, val) {
+  const elId = type === 'age' ? 'filterAge' : 'filterCat';
+  const sel = document.getElementById(elId);
+  if (sel) { sel.value = val; applyFilters(); }
+  document.getElementById('vitrine')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
-            if (cart.length === 0) {
-                cartItems.innerHTML = `
-                    <div class="cart-empty">
-                        <div class="cart-empty-icon">🛒</div>
-                        <p>Seu carrinho está vazio</p>
-                    </div>
-                `;
-            } else {
-                cartItems.innerHTML = cart.map(item => `
-                    <div class="cart-item">
-                        <div class="cart-item-image">${item.emoji}</div>
-                        <div class="cart-item-info">
-                            <div class="cart-item-name">${item.name}</div>
-                            <div class="cart-item-price">R$ ${item.price.toFixed(2).replace('.', ',')}</div>
-                            <div class="cart-item-controls">
-                                <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">−</button>
-                                <span class="qty-display">${item.quantity}</span>
-                                <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
-                                <button class="remove-item" onclick="removeItem(${item.id})">🗑️</button>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            }
+function doSearch() {
+  applyFilters();
+}
 
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            cartTotal.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-        }
+/* ═══════════════════════════════════════════════════════════════
+   RENDER — PRODUTOS
+═══════════════════════════════════════════════════════════════ */
+function renderProducts() {
+  const grid = document.getElementById('productGrid');
+  if (!grid) return;
 
-        function updateQuantity(productId, change) {
-            const item = cart.find(item => item.id === productId);
-            if (item) {
-                item.quantity += change;
-                if (item.quantity <= 0) {
-                    removeItem(productId);
-                } else {
-                    updateCart();
-                }
-            }
-        }
+  if (filteredProds.length === 0) {
+    grid.innerHTML = `
+      <div class="state-message" style="grid-column:1/-1">
+        <div class="state-icon" aria-hidden="true">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--placeholder)" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <h3>Nenhum produto encontrado</h3>
+        <p>Tente outros filtros ou limpe a busca.</p>
+        <button class="btn btn-ghost" onclick="clearFilters()">Limpar filtros</button>
+      </div>`;
+    return;
+  }
 
-        function removeItem(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            updateCart();
-        }
+  grid.innerHTML = filteredProds.map(p => {
+    const pixPrice = (p.price * 0.95).toFixed(2).replace('.', ',');
+    const inst3x   = (p.price / 3).toFixed(2).replace('.', ',');
+    const badgeCls = p.badge ? badgeClass(p.badge) : '';
+    const badgeHtml = p.badge
+      ? `<span class="badge ${badgeCls}">${p.badge}</span>` : '';
 
-        function toggleCart() {
-            const sidebar = document.getElementById('cartSidebar');
-            const overlay = document.getElementById('overlay');
-            const userPanel = document.getElementById('userPanel');
+    return `
+      <article class="product-card" role="listitem">
+        <a href="/pages/produto.html?id=${p.id}" class="product-img-wrap" aria-label="Ver ${p.name}">
+          <div class="product-img-placeholder" aria-hidden="true">${p.emoji}</div>
+          <div class="product-badge-group">
+            ${badgeHtml}
+            <span class="badge badge-age">${p.age}</span>
+          </div>
+        </a>
+        <div class="product-body">
+          <div class="product-cat-label">${p.category}</div>
+          <h3 class="product-name">${p.name}</h3>
+          <p class="product-desc">${p.description}</p>
+        </div>
+        <div class="product-footer">
+          <div class="product-price-wrap">
+            <div class="product-price-main">R$ ${p.price.toFixed(2).replace('.', ',')}</div>
+            <div class="product-price-pix">R$ ${pixPrice} no Pix &bull; 3x de R$ ${inst3x}</div>
+          </div>
+          <button
+            class="add-cart-btn"
+            onclick="addToCart(${p.id})"
+            aria-label="Adicionar ${p.name} ao carrinho"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          </button>
+        </div>
+      </article>`;
+  }).join('');
+}
 
-            // Fecha painel de usuário se estiver aberto
-            if (userPanel.classList.contains('active')) {
-                userPanel.classList.remove('active');
-            }
+function clearFilters() {
+  document.getElementById('filterAge').value = 'all';
+  document.getElementById('filterCat').value = 'all';
+  document.getElementById('searchInput').value = '';
+  applyFilters();
+}
 
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
+function badgeClass(badge) {
+  const b = (badge || '').toLowerCase();
+  if (b.includes('novo') || b.includes('novidade')) return 'badge-new';
+  if (b.includes('mais vendido') || b.includes('top')) return 'badge-hot';
+  if (b.includes('profis')) return 'badge-pro';
+  if (b.includes('inmetro') || b.includes('inm')) return 'badge-inm';
+  return 'badge-tag';
+}
 
-        async function checkout() {
-            if (cart.length === 0) {
-                showNotification('Adicione produtos ao carrinho primeiro!');
-                return;
-            }
-            showNotification('Funcionalidade de checkout será implementada em breve!');
-        }
+/* ═══════════════════════════════════════════════════════════════
+   CATEGORIAS
+═══════════════════════════════════════════════════════════════ */
+const CAT_COLORS = {
+  0: 'background:var(--teal-soft)',
+  1: 'background:var(--coral-soft)',
+  2: 'background:var(--purple-soft)',
+  3: 'background:var(--yellow-soft)',
+  4: 'background:var(--teal-soft)',
+};
 
-        function showNotification(message) {
-            const notification = document.getElementById('notification');
-            const notificationText = document.getElementById('notificationText');
-            notificationText.textContent = message;
-            notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
+const CAT_GROUPS = {
+  age: [
+    { icon: '👶', name: '0-12 meses', desc: 'Exploracao tatil, sons suaves', filter: { age: '0-12m' } },
+    { icon: '🧒', name: '1-3 anos', desc: 'Encaixes, texturas, causa e efeito', filter: { age: '1+' } },
+    { icon: '🏃', name: '3-5 anos', desc: 'Equilibrio, propriocepcao, jogo simbolico', filter: { age: '3+' } },
+    { icon: '📚', name: '5-7 anos', desc: 'Regulacao, foco, coordenacao motora fina', filter: { age: '5+' } },
+    { icon: '🎯', name: '6+ anos', desc: 'Fidgets funcionais, kits de exploracao', filter: { age: '6+' } },
+  ],
+  sense: [
+    { icon: '✋', name: 'Tato', desc: 'Texturas, massinha, bolas sensoriais', filter: { cat: 'Tato' } },
+    { icon: '👁', name: 'Visao', desc: 'Luminarios, alto contraste, projetores', filter: { cat: 'Luminoso' } },
+    { icon: '🎵', name: 'Audicao', desc: 'Instrumentos, abafadores, sons suaves', filter: { cat: 'Musical' } },
+    { icon: '⚖', name: 'Propriocepcao', desc: 'Ponderados, pressao profunda', filter: { cat: 'Ponderado' } },
+    { icon: '🌀', name: 'Vestibular', desc: 'Balancos, rotacao, equilibrio', filter: { cat: 'Vestibular' } },
+  ],
+  goal: [
+    { icon: '🧘', name: 'Autorregulacao', desc: 'Conforto em momentos de sobrecarga', filter: { cat: 'Fidget' } },
+    { icon: '🎯', name: 'Foco e atencao', desc: 'Para a crianca que precisa de movimento para pensar', filter: { cat: 'Fidget' } },
+    { icon: '🤲', name: 'Coordenacao motora', desc: 'Pinca, preensao, motricidade fina', filter: { cat: 'Motricidade' } },
+    { icon: '🗣', name: 'Linguagem', desc: 'Faz de conta, interacao e vocabulario', filter: { cat: 'Linguagem' } },
+    { icon: '🧩', name: 'Cognicao', desc: 'Encaixes, causa e efeito, resolucao de problemas', filter: { cat: 'Cognicao' } },
+  ],
+};
 
-        function scrollToProducts() {
-            document.getElementById('productGrid').scrollIntoView({ behavior: 'smooth' });
-        }
+function showCatGroup(evt, group) {
+  document.querySelectorAll('.cat-tab').forEach(t => {
+    t.classList.remove('active');
+    t.setAttribute('aria-selected', 'false');
+  });
+  evt.target.classList.add('active');
+  evt.target.setAttribute('aria-selected', 'true');
+  renderCategoryGrid(group);
+}
 
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+function renderCategoryGrid(group) {
+  const grid = document.getElementById('catGrid');
+  if (!grid) return;
+  const items = CAT_GROUPS[group] || [];
+  grid.innerHTML = items.map((c, i) => `
+    <button
+      class="cat-tile"
+      role="listitem"
+      onclick="applyQuickFilter(${JSON.stringify(c.filter).replace(/"/g,"'")})"
+      aria-label="Ver produtos: ${c.name}"
+    >
+      <div class="cat-tile-icon-wrap" style="${CAT_COLORS[i % 5]}" aria-hidden="true">${c.icon}</div>
+      <div class="cat-tile-name">${c.name}</div>
+      <div class="cat-tile-count">${c.desc}</div>
+    </button>
+  `).join('');
+}
 
-        function toggleUserPanel() {
-            const userPanel = document.getElementById('userPanel');
-            const overlay = document.getElementById('overlay');
+function applyQuickFilter(filter) {
+  if (filter.age) setFilter('age', filter.age);
+  if (filter.cat) setFilter('category', filter.cat);
+}
 
-            const willOpen = !userPanel.classList.contains('active');
+/* ═══════════════════════════════════════════════════════════════
+   MODAL DE PRODUTO
+═══════════════════════════════════════════════════════════════ */
+function openModal(id) {
+  const p = allProducts.find(x => x.id === id);
+  if (!p) return;
+  currentProductId = id;
 
-            // Fecha carrinho se estiver aberto
-            const sidebar = document.getElementById('cartSidebar');
-            if (sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
-            }
+  const pixPrice = (p.price * 0.95).toFixed(2).replace('.', ',');
+  const inst3x   = (p.price / 3).toFixed(2).replace('.', ',');
 
-            if (willOpen) {
-                userPanel.classList.add('active');
-                overlay.classList.add('active');
-            } else {
-                userPanel.classList.remove('active');
-                overlay.classList.remove('active');
-            }
-        }
+  document.getElementById('modalImg').textContent   = p.emoji;
+  document.getElementById('modalCat').textContent   = p.category;
+  document.getElementById('modalName').textContent  = p.name;
+  document.getElementById('modalPrice').textContent = `R$ ${p.price.toFixed(2).replace('.', ',')}`;
+  document.getElementById('modalPix').textContent   = `R$ ${pixPrice} no Pix \u2022 3x de R$ ${inst3x} sem juros`;
+  document.getElementById('modalDesc').textContent  = p.description;
 
-        // Fechar tudo ao clicar no overlay
-        document.getElementById('overlay').addEventListener('click', () => {
-            const sidebar = document.getElementById('cartSidebar');
-            const userPanel = document.getElementById('userPanel');
-            sidebar.classList.remove('active');
-            userPanel.classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
-        });
+  document.getElementById('modalTags').innerHTML = `
+    <span class="badge badge-age">${p.age} anos</span>
+    <span class="badge badge-sense">${p.category}</span>
+    ${p.badge ? `<span class="badge ${badgeClass(p.badge)}">${p.badge}</span>` : ''}
+  `;
 
-        // Inicializa carregando produtos da API (ou fallback)
-        loadProducts();
-    </script>
+  const detailLink = document.getElementById('modalDetailLink');
+  detailLink.href = `/pages/produto.html?id=${p.id}`;
+
+  const addBtn = document.getElementById('modalAddBtn');
+  addBtn.onclick = () => { addToCart(id); closeModal(); };
+
+  document.getElementById('productModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  addBtn.focus();
+}
+
+function closeModal() {
+  document.getElementById('productModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOnBg(e) {
+  if (e.target === document.getElementById('productModal')) closeModal();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CARRINHO
+═══════════════════════════════════════════════════════════════ */
+function saveCart() {
+  localStorage.setItem('sensori_cart', JSON.stringify(cart));
+}
+
+function addToCart(id) {
+  const p = allProducts.find(x => x.id === id);
+  if (!p) return;
+  const existing = cart.find(c => c.id === id);
+  if (existing) existing.qty++;
+  else cart.push({ id: p.id, name: p.name, price: p.price, emoji: p.emoji, qty: 1 });
+  saveCart();
+  renderCartUI();
+  const shortName = p.name.split('—')[0].trim().split(' ').slice(0,4).join(' ');
+  showToast(`${shortName} adicionado ao carrinho`, 'success');
+}
+
+function updateQty(id, delta) {
+  const item = cart.find(c => c.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
+  saveCart();
+  renderCartUI();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(c => c.id !== id);
+  saveCart();
+  renderCartUI();
+}
+
+function cartSubtotal() { return cart.reduce((s, c) => s + c.price * c.qty, 0); }
+function cartItemsCount() { return cart.reduce((s, c) => s + c.qty, 0); }
+
+function calcDiscount(subtotal) {
+  if (!appliedCoupon) return 0;
+  let d = 0;
+  if (appliedCoupon.discount_percent) d += subtotal * appliedCoupon.discount_percent / 100;
+  if (appliedCoupon.discount_value)   d += parseFloat(appliedCoupon.discount_value);
+  return Math.min(d, subtotal);
+}
+
+function calcShipping(subtotal, coupon) {
+  if (coupon && coupon.is_free_shipping) return 0;
+  if (subtotal >= SHIPPING_FREE) return 0;
+  return cart.length > 0 ? SHIPPING_FLAT : 0;
+}
+
+function fmt(n) { return n.toFixed(2).replace('.', ','); }
+
+function renderCartUI() {
+  const count = cartItemsCount();
+  const badge = document.getElementById('cartBadge');
+  badge.textContent = count;
+  badge.style.display = count > 0 ? 'flex' : 'none';
+  badge.setAttribute('aria-label', `${count} ${count === 1 ? 'item' : 'itens'} no carrinho`);
+
+  const body = document.getElementById('cartBody');
+  const foot = document.getElementById('cartFoot');
+
+  if (cart.length === 0) {
+    foot.style.display = 'none';
+    body.innerHTML = `
+      <div class="cart-empty-msg">
+        <div class="ico" aria-hidden="true">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--placeholder)" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        </div>
+        <p>Seu carrinho esta vazio.<br>Explore o catalogo e adicione produtos.</p>
+        <button class="btn btn-secondary" onclick="closeCart()">Ver produtos</button>
+      </div>`;
+    return;
+  }
+
+  foot.style.display = 'block';
+
+  body.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-img" aria-hidden="true">${item.emoji}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">R$ ${fmt(item.price)}</div>
+        <div class="cart-item-controls">
+          <button class="qty-btn" onclick="updateQty(${item.id},-1)" aria-label="Diminuir quantidade">-</button>
+          <span class="qty-val" aria-label="Quantidade: ${item.qty}">${item.qty}</span>
+          <button class="qty-btn" onclick="updateQty(${item.id},1)" aria-label="Aumentar quantidade">+</button>
+          <button class="remove-btn" onclick="removeFromCart(${item.id})" aria-label="Remover ${item.name} do carrinho">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
+
+  const subtotal = cartSubtotal();
+  const discount = calcDiscount(subtotal);
+  const shipping = calcShipping(subtotal - discount, appliedCoupon);
+  const final    = subtotal - discount + shipping;
+
+  // Barra de progresso de frete
+  const remaining = Math.max(0, SHIPPING_FREE - (subtotal - discount));
+  const pct       = Math.min(100, ((subtotal - discount) / SHIPPING_FREE) * 100);
+  const shipText  = document.getElementById('shippingText');
+  const shipFill  = document.getElementById('shippingFill');
+
+  if (remaining > 0) {
+    shipText.textContent = `Falta R$ ${fmt(remaining)} para frete gratis`;
+    shipText.innerHTML   = `Falta <strong>R$ ${fmt(remaining)}</strong> para frete gratis`;
+    shipFill.style.width = pct + '%';
+    shipFill.setAttribute('aria-valuenow', Math.round(pct));
+  } else {
+    shipText.innerHTML = '<strong>Frete gratis desbloqueado!</strong>';
+    shipText.style.color = 'var(--success)';
+    shipFill.style.width = '100%';
+    shipFill.setAttribute('aria-valuenow', 100);
+  }
+
+  document.getElementById('totalSubtotal').textContent = `R$ ${fmt(subtotal)}`;
+
+  const discRow = document.getElementById('discountRow');
+  if (discount > 0) {
+    discRow.style.display = 'flex';
+    document.getElementById('totalDiscount').textContent = `- R$ ${fmt(discount)}`;
+  } else {
+    discRow.style.display = 'none';
+  }
+
+  document.getElementById('totalShipping').textContent = shipping === 0 ? 'Gratis' : `R$ ${fmt(shipping)}`;
+  document.getElementById('totalFinal').textContent    = `R$ ${fmt(final)}`;
+}
+
+async function applyCoupon() {
+  const code = document.getElementById('couponInput').value.trim().toUpperCase();
+  const msg  = document.getElementById('couponMsg');
+  if (!code) {
+    msg.textContent  = 'Digite um cupom.';
+    msg.className    = 'coupon-msg err';
+    return;
+  }
+  try {
+    const r = await fetch(`${API_BASE}/coupons/${code}`);
+    if (!r.ok) throw new Error('Cupom nao encontrado ou invalido.');
+    const data = await r.json();
+    const subtotal = cartSubtotal();
+    if (data.min_order_value && subtotal < data.min_order_value) {
+      throw new Error(`Pedido minimo de R$ ${fmt(parseFloat(data.min_order_value))} para este cupom.`);
+    }
+    appliedCoupon = data;
+    msg.textContent = 'Cupom aplicado com sucesso!';
+    msg.className   = 'coupon-msg ok';
+    renderCartUI();
+  } catch (err) {
+    appliedCoupon   = null;
+    msg.textContent = err.message;
+    msg.className   = 'coupon-msg err';
+    renderCartUI();
+  }
+}
+
+function openCart() {
+  document.getElementById('cartSidebar').classList.add('open');
+  document.getElementById('overlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  closeUserPanel();
+  document.getElementById('cartSidebar').querySelector('.cart-close').focus();
+}
+
+function closeCart() {
+  document.getElementById('cartSidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function goCheckout() {
+  if (cart.length === 0) { showToast('Adicione produtos ao carrinho.', 'error'); return; }
+  saveCart();
+  if (appliedCoupon) localStorage.setItem('sensori_coupon', JSON.stringify(appliedCoupon));
+  window.location.href = '/pages/checkout.html';
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTA
+═══════════════════════════════════════════════════════════════ */
+function toggleUserPanel() {
+  const panel   = document.getElementById('userPanel');
+  const btn     = document.getElementById('accountBtn');
+  const isOpen  = panel.classList.contains('open');
+  if (isOpen) {
+    closeUserPanel();
+  } else {
+    closeCart();
+    panel.classList.add('open');
+    document.getElementById('overlay').classList.add('active');
+    btn.setAttribute('aria-expanded', 'true');
+  }
+}
+
+function closeUserPanel() {
+  const panel = document.getElementById('userPanel');
+  const btn   = document.getElementById('accountBtn');
+  panel.classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+  btn.setAttribute('aria-expanded', 'false');
+}
+
+function closeAll() {
+  closeCart();
+  closeUserPanel();
+}
+
+function checkAuthState() {
+  const token = localStorage.getItem('sensori_token');
+  const btns  = document.getElementById('userPanelBtns');
+  const sub   = document.getElementById('userPanelSubtitle');
+  if (token) {
+    sub.textContent = 'Voce esta logado.';
+    btns.innerHTML = `
+      <a href="/pages/minha-conta.html" class="btn btn-primary">Minha conta</a>
+      <button class="btn btn-ghost" onclick="logout()">Sair</button>
+    `;
+  }
+}
+
+function logout() {
+  localStorage.removeItem('sensori_token');
+  window.location.reload();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FAQ
+═══════════════════════════════════════════════════════════════ */
+function toggleFaq(btn) {
+  const item   = btn.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => {
+    i.classList.remove('open');
+    i.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+  });
+  if (!isOpen) {
+    item.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NEWSLETTER
+═══════════════════════════════════════════════════════════════ */
+function handleNewsletter(e) {
+  e.preventDefault();
+  showToast('Inscricao realizada! Em breve voce recebera nossas novidades.', 'success');
+  e.target.reset();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = `toast-single ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.classList.remove('show'); }, 3500);
+}
+</script>
 </body>
 </html>

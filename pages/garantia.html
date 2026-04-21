@@ -1,38 +1,85 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Garantia | Sensori Play</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #fafafa; color: #2c3e50; }
-        header { background: #ff6b9d; color: #fff; padding: 1.5rem 2rem; }
-        header h1 { margin: 0; font-size: 1.5rem; }
-        header a { color: #fff; text-decoration: none; font-size: 0.9rem; }
-        main { max-width: 900px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-        h2 { margin-top: 1.5rem; }
-        ul { padding-left: 1.2rem; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Garantia | SensoriPlay</title>
+  <link rel="icon" href="/assets/sensori-play-logo.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/design-tokens.css">
+  <link rel="stylesheet" href="/assets/base.css">
+  <link rel="stylesheet" href="/assets/components.css">
+  <style>
+    /* Compat tokens antigos — mapeando para novos */
+    :root {
+      --bg: var(--off-white); --surface: var(--white);
+      --text-main: var(--ink); --text-muted: var(--muted);
+      --font-display: var(--f-display); --font-ui: var(--f-body);
+      --coral-light: var(--coral-soft); --teal-light: var(--teal-soft);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:var(--font-ui);background:var(--bg);color:var(--text-main);line-height:1.6;}
+    a{color:inherit;text-decoration:none;}
+    .site-nav{background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);position:sticky;top:0;z-index:100;}
+    .site-nav-inner{max-width:1280px;margin:0 auto;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;}
+    .logo-link img{height:44px;}
+    .nav-back{font-size:14px;color:var(--teal);font-weight:500;}
+    .nav-back:hover{text-decoration:underline;}
+    .page-hero{background:linear-gradient(135deg,var(--teal-light),var(--coral-light));padding:64px 24px;text-align:center;}
+    .page-hero h1{font-family:var(--font-display);font-size:clamp(24px,4vw,36px);font-weight:800;margin-bottom:12px;}
+    .page-hero p{font-size:16px;color:var(--text-muted);max-width:480px;margin:0 auto;}
+    .page-content{max-width:760px;margin:0 auto;padding:56px 24px 80px;}
+    h2{font-family:var(--font-display);font-size:22px;font-weight:800;margin:36px 0 16px;padding-left:16px;border-left:4px solid var(--coral);}
+    p{font-size:15px;color:var(--text-muted);line-height:1.8;margin-bottom:12px;}
+    p strong{color:var(--text-main);}
+    ul{margin:12px 0 16px 20px;color:var(--text-muted);font-size:14px;line-height:1.8;}
+    .highlight-box{background:var(--teal-light);border:1px solid var(--teal);border-radius:10px;padding:20px;margin:20px 0;}
+    .highlight-box p{color:var(--teal);font-weight:600;margin:0;}
+    .page-footer{background:#1A1A2E;color:rgba(255,255,255,0.7);text-align:center;padding:28px 24px;font-size:13px;}
+    .page-footer a{color:rgba(255,255,255,0.7);}
+    .page-footer a:hover{color:#fff;}
+  </style>
 </head>
 <body>
-<header>
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h1>Garantia</h1>
-        <a href="../index.html">← Voltar para a loja</a>
-    </div>
-</header>
-<main>
-    <p>Nossos produtos passam por inspeção antes do envio. Garantimos que todas as peças chegam em perfeitas condições de uso.</p>
-    <h2>O que está coberto</h2>
-    <ul>
-        <li>Defeitos de fabricação.</li>
-        <li>Problemas estruturais que impeçam o uso correto do brinquedo.</li>
-    </ul>
-    <h2>O que não está coberto</h2>
-    <ul>
-        <li>Uso indevido ou fora das orientações.</li>
-        <li>Desgaste natural causado pelo uso contínuo.</li>
-    </ul>
-</main>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="/" class="logo-link"><img src="/assets/sensori-play-logo.png" alt="SensoriPlay"></a>
+    <a href="/" class="nav-back">&#8592; Voltar para a loja</a>
+  </div>
+</nav>
+<div class="page-hero">
+  <h1>Garantia</h1>
+  <p>Nos responsabilizamos pela qualidade de cada produto que sai daqui.</p>
+</div>
+<div class="page-content">
+  <div class="highlight-box">
+    <p>&#9989; Garantia de 90 dias contra defeito de fabricação em todos os produtos do catálogo SensoriPlay.</p>
+  </div>
+
+  <h2>O que cobre a garantia</h2>
+  <p>A garantia SensoriPlay cobre <strong>defeitos de fabricação</strong> identificados durante o uso normal do produto dentro do prazo de 90 dias a partir da data de entrega. São exemplos cobertos:</p>
+  <ul>
+    <li>Material que se desfaz ou racha sem impacto ou uso inadequado</li>
+    <li>Costura que abre em colete ou almofada ponderada</li>
+    <li>Eletrônico que para de funcionar sem causa externa</li>
+    <li>Produto que chega danificado pelo transporte</li>
+  </ul>
+
+  <h2>O que não cobre</h2>
+  <p>A garantia não cobre danos causados por uso inadequado para a faixa etária indicada, quedas, cortes ou exposição intencional a água em produtos não à prova d'água, nem desgaste natural por uso prolongado.</p>
+
+  <h2>Como acionar a garantia</h2>
+  <p>Envie um e-mail para <a href="mailto:contato@sensoriplay.com.br" style="color:var(--teal)">contato@sensoriplay.com.br</a> com o assunto <strong>"Garantia — pedido #XXXXX"</strong> descrevendo o problema e, se possível, incluindo foto do defeito. Respondemos em até 1 dia útil.</p>
+  <p>Em caso de garantia confirmada, enviamos o produto substituto sem custo de frete para o cliente.</p>
+
+  <h2>Garantia do fornecedor</h2>
+  <p>Além da garantia SensoriPlay, alguns produtos possuem garantia adicional do fabricante. Quando aplicável, essa informação consta na descrição do produto.</p>
+
+  <h2>Certificação e segurança</h2>
+  <p>Todos os produtos do catálogo passam por verificação de certificação INMETRO ou equivalente internacional antes de serem incluídos. Isso garante que os materiais atendem aos padrões de segurança estabelecidos pela legislação brasileira e internacional para brinquedos e produtos infantis.</p>
+</div>
+<footer class="page-footer">
+  <p>&copy; 2026 SensoriPlay &nbsp;|&nbsp; <a href="/pages/trocas.html">Trocas e devolu&ccedil;&otilde;es</a> &nbsp;|&nbsp; <a href="/pages/faq.html">FAQ</a> &nbsp;|&nbsp; <a href="/">Voltar &agrave; loja</a></p>
+</footer>
 </body>
 </html>

@@ -1,0 +1,125 @@
+/*
+ * SensoriPlay — Design Tokens
+ * Fonte única de verdade para todas as variáveis CSS do projeto.
+ * Importar em todas as páginas ANTES de qualquer outro CSS.
+ * Paleta: "consultório de brinquedoteca" — off-white quente, cores do logo como acentos.
+ */
+
+:root {
+  /* ── Cores primárias (do logo — usar como acentos, não como fundos grandes) ── */
+  --coral:          #E74C3C;
+  --coral-dark:     #C0392B;
+  --coral-soft:     #FDEEEC;
+  --teal:           #17A2A2;
+  --teal-dark:      #138A8A;
+  --teal-soft:      #E8F6F6;
+  --yellow:         #F5C13D;
+  --yellow-soft:    #FDF6E3;
+  --purple:         #7B5FB3;
+  --purple-soft:    #F0EBF8;
+  --orange:         #F38B3C;
+
+  /* ── Neutros quentes — dominam o site ── */
+  --white:          #FFFFFF;
+  --off-white:      #FBFAF7;   /* bg principal — levemente quente, não branco frio */
+  --cream:          #F7F3EC;   /* seções alternadas */
+  --border:         #EEE9E0;
+  --border-strong:  #E0DACF;
+
+  /* ── Textos — contraste AAA (7:1 mínimo) ── */
+  --ink:            #1F1B16;   /* títulos — preto quente */
+  --text:           #3A3530;   /* corpo de texto */
+  --muted:          #6B6359;   /* apoio, metadados */
+  --placeholder:    #A89F94;   /* placeholder e disabled */
+
+  /* ── Sombras com tinte quente ── */
+  --shadow-xs:      0 1px 2px rgba(31,27,22,0.04);
+  --shadow-sm:      0 2px 8px rgba(31,27,22,0.06);
+  --shadow-md:      0 8px 24px rgba(31,27,22,0.08);
+  --shadow-lg:      0 20px 48px rgba(31,27,22,0.10);
+
+  /* ── Estados de feedback ── */
+  --success:        #2E7D52;
+  --success-soft:   #E8F5EC;
+  --error:          #C62828;
+  --error-soft:     #FDECEC;
+  --warning:        #E65100;
+  --warning-soft:   #FFF3E0;
+  --info:           #1565C0;
+  --info-soft:      #E7F0FB;
+
+  /* ── Radii ── */
+  --r-xs:   4px;
+  --r-sm:   8px;
+  --r-md:   14px;
+  --r-lg:   20px;
+  --r-xl:   28px;
+  --r-pill: 999px;
+
+  /* ── Espaçamentos ── */
+  --sp-1:   4px;
+  --sp-2:   8px;
+  --sp-3:   12px;
+  --sp-4:   16px;
+  --sp-5:   24px;
+  --sp-6:   32px;
+  --sp-7:   48px;
+  --sp-8:   64px;
+  --sp-9:   96px;
+
+  /* ── Tipografia ── */
+  --f-display: 'Nunito', 'Fraunces', Georgia, serif;
+  --f-body:    'Inter', system-ui, -apple-system, sans-serif;
+
+  /* ── Escala tipográfica ── */
+  --text-xs:   12px;
+  --text-sm:   14px;
+  --text-base: 16px;
+  --text-lg:   18px;
+  --text-xl:   22px;
+  --text-2xl:  28px;
+  --text-3xl:  36px;
+  --text-4xl:  48px;
+
+  /* ── Line heights ── */
+  --lh-tight:  1.2;
+  --lh-snug:   1.4;
+  --lh-base:   1.6;
+  --lh-relaxed: 1.75;
+
+  /* ── Larguras de container ── */
+  --container:      1280px;
+  --container-text: 65ch;
+
+  /* ── Z-indices ── */
+  --z-sticky:   100;
+  --z-dropdown: 150;
+  --z-overlay:  200;
+  --z-modal:    300;
+  --z-toast:    400;
+
+  /* ── Transições ── */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+/* Alto contraste — honrar preferência do sistema */
+@media (prefers-contrast: high) {
+  :root {
+    --border:       #B8B0A4;
+    --border-strong:#8A8078;
+    --muted:        #4A403A;
+    --placeholder:  #6B6359;
+  }
+}
+
+/* Redução de movimento — honrar preferência do sistema */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

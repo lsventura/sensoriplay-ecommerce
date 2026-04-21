@@ -1,145 +1,440 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Entrar | Sensori Play</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Substitua pelo seu client ID do Google -->
-    <meta name="google-signin-client_id" content="SEU_CLIENT_ID_DO_GOOGLE.apps.googleusercontent.com">
-    <style>
-        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background:#fafafa; color:#2c3e50; }
-        header { background:#ff6b9d; color:#fff; padding:1.5rem 2rem; display:flex; justify-content:space-between; align-items:center; }
-        header a { color:#fff; text-decoration:none; font-size:0.9rem; }
-        main { max-width:900px; margin:2rem auto; background:#fff; padding:2rem; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.08); }
-        h1 { margin-top:0; }
-        .tabs { display:flex; gap:1rem; margin-bottom:1rem; }
-        .tab-btn { border:none; background:#ecf0f1; padding:0.4rem 0.9rem; border-radius:999px; cursor:pointer; font-size:0.9rem; }
-        .tab-btn.active { background:#ff6b9d; color:#fff; }
-        form { display:grid; gap:0.8rem; max-width:380px; }
-        label { font-size:0.9rem; font-weight:600; }
-        input { width:100%; padding:0.5rem 0.6rem; border-radius:6px; border:1px solid #d0d0d0; font-size:0.95rem; }
-        button[type="submit"] { margin-top:0.6rem; padding:0.6rem 1.4rem; border-radius:999px; border:none; background:#ff6b9d; color:#fff; font-weight:600; cursor:pointer; }
-        #status { margin-top:0.8rem; font-size:0.9rem; }
-        .google-btn { margin-top:1rem; padding:0.6rem 1.4rem; border-radius:999px; border:1px solid #d0d0d0; background:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:0.5rem; font-size:0.9rem; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar | SensoriPlay</title>
+  <meta name="description" content="Acesse sua conta SensoriPlay para acompanhar pedidos e acessar beneficios exclusivos.">
+  <link rel="icon" href="/assets/sensori-play-logo.png" type="image/png">
+  <meta name="google-signin-client_id" content="SEU_CLIENT_ID_DO_GOOGLE.apps.googleusercontent.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/design-tokens.css">
+  <link rel="stylesheet" href="/assets/base.css">
+  <style>
+    body {
+      background: var(--cream);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      padding: var(--sp-5);
+    }
+
+    .auth-logo {
+      margin-bottom: var(--sp-5);
+      text-align: center;
+    }
+
+    .auth-logo img {
+      height: 56px;
+      margin-inline: auto;
+    }
+
+    .auth-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: var(--sp-7) var(--sp-6);
+      width: 100%;
+      max-width: 420px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .auth-card h1 {
+      font-family: var(--f-display);
+      font-size: var(--text-2xl);
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: var(--sp-2);
+      text-align: center;
+    }
+
+    .auth-subtitle {
+      font-size: var(--text-sm);
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: var(--sp-6);
+    }
+
+    .tab-group {
+      display: flex;
+      gap: 0;
+      margin-bottom: var(--sp-5);
+      background: var(--cream);
+      border-radius: var(--r-sm);
+      padding: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px 16px;
+      border: none;
+      border-radius: calc(var(--r-sm) - 2px);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      transition: background var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+    }
+
+    .tab-btn.active {
+      background: var(--white);
+      color: var(--ink);
+      font-weight: 600;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .tab-btn:focus-visible { outline: 3px solid var(--coral); }
+
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+
+    .form-group {
+      margin-bottom: var(--sp-4);
+    }
+
+    .form-label {
+      display: block;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: var(--sp-2);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--r-sm);
+      font-size: var(--text-base);
+      font-family: var(--f-body);
+      color: var(--text);
+      background: var(--off-white);
+      transition: border-color var(--transition-base), box-shadow var(--transition-base);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(23,162,162,0.15);
+      background: var(--white);
+    }
+
+    .form-input::placeholder { color: var(--placeholder); }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--coral);
+      color: var(--white);
+      border: none;
+      border-radius: var(--r-sm);
+      font-size: var(--text-base);
+      font-weight: 600;
+      font-family: var(--f-body);
+      cursor: pointer;
+      margin-top: var(--sp-2);
+      transition: background var(--transition-base);
+    }
+
+    .submit-btn:hover { background: var(--coral-dark); }
+    .submit-btn:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      margin: var(--sp-5) 0;
+      color: var(--placeholder);
+      font-size: var(--text-xs);
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .google-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--white);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--r-sm);
+      font-size: var(--text-sm);
+      font-family: var(--f-body);
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-3);
+      transition: background var(--transition-base), border-color var(--transition-base);
+    }
+
+    .google-btn:hover { background: var(--cream); border-color: var(--border-strong); }
+    .google-btn:focus-visible { outline: 3px solid var(--coral); }
+
+    .google-logo {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .status-msg {
+      margin-top: var(--sp-4);
+      padding: var(--sp-3) var(--sp-4);
+      border-radius: var(--r-sm);
+      font-size: var(--text-sm);
+      display: none;
+    }
+
+    .status-msg.ok {
+      background: var(--success-soft);
+      color: var(--success);
+      border: 1px solid var(--success);
+      display: block;
+    }
+
+    .status-msg.err {
+      background: var(--error-soft);
+      color: var(--error);
+      border: 1px solid var(--error);
+      display: block;
+    }
+
+    .auth-back {
+      display: block;
+      text-align: center;
+      margin-top: var(--sp-5);
+      font-size: var(--text-sm);
+      color: var(--muted);
+    }
+
+    .auth-back a {
+      color: var(--teal);
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-<header>
-    <h1>Conta Sensori Play</h1>
-    <a href="../index.html">← Voltar para a loja</a>
-</header>
-<main>
-    <div class="tabs">
-        <button class="tab-btn active" id="loginTab" onclick="showTab('login')">Entrar</button>
-        <button class="tab-btn" id="registerTab" onclick="showTab('register')">Criar conta</button>
-    </div>
 
-    <section id="loginSection">
-        <form id="loginForm">
-            <div>
-                <label for="loginEmail">E-mail</label>
-                <input id="loginEmail" type="email" required>
-            </div>
-            <div>
-                <label for="loginPassword">Senha</label>
-                <input id="loginPassword" type="password" required>
-            </div>
-            <button type="submit">Entrar</button>
-        </form>
-    </section>
+<a href="#main-form" class="skip-link">Ir para o formulario</a>
 
-    <section id="registerSection" style="display:none;">
-        <form id="registerForm">
-            <div>
-                <label for="regName">Nome</label>
-                <input id="regName" required>
-            </div>
-            <div>
-                <label for="regEmail">E-mail</label>
-                <input id="regEmail" type="email" required>
-            </div>
-            <div>
-                <label for="regPassword">Senha</label>
-                <input id="regPassword" type="password" required>
-            </div>
-            <button type="submit">Criar conta</button>
-        </form>
-    </section>
+<div class="auth-logo">
+  <a href="/">
+    <img src="/assets/sensori-play-logo.png" alt="SensoriPlay — pagina inicial">
+  </a>
+</div>
 
-    <button class="google-btn" onclick="googleLoginPlaceholder()">Continuar com Google</button>
-    <p style="font-size:0.8rem;color:#7f8c8d;">Dica: em produção, substitua pelo botão oficial do Google Identity e envie o ID token para <code>/auth/google</code>.</p>
+<main class="auth-card" id="main-form">
+  <h1>Sua conta</h1>
+  <p class="auth-subtitle">Acesse para acompanhar pedidos e receber novidades.</p>
 
-    <p id="status"></p>
+  <div class="tab-group" role="tablist" aria-label="Opcoes de acesso">
+    <button class="tab-btn active" role="tab" aria-selected="true" id="loginTab" onclick="showTab('login')">Entrar</button>
+    <button class="tab-btn" role="tab" aria-selected="false" id="registerTab" onclick="showTab('register')">Criar conta</button>
+  </div>
+
+  <!-- LOGIN -->
+  <section class="form-section active" id="loginSection" aria-label="Formulario de login">
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="loginEmail">
+          E-mail <span style="color:var(--coral)">*</span>
+        </label>
+        <input
+          class="form-input"
+          type="email"
+          id="loginEmail"
+          autocomplete="email"
+          required
+          placeholder="seu@email.com"
+        >
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="loginPassword">
+          Senha <span style="color:var(--coral)">*</span>
+        </label>
+        <input
+          class="form-input"
+          type="password"
+          id="loginPassword"
+          autocomplete="current-password"
+          required
+          placeholder="Sua senha"
+        >
+      </div>
+      <button type="submit" class="submit-btn">Entrar</button>
+    </form>
+  </section>
+
+  <!-- REGISTRO -->
+  <section class="form-section" id="registerSection" aria-label="Formulario de cadastro">
+    <form id="registerForm" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="regName">
+          Nome completo <span style="color:var(--coral)">*</span>
+        </label>
+        <input
+          class="form-input"
+          type="text"
+          id="regName"
+          autocomplete="name"
+          required
+          placeholder="Seu nome"
+        >
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regEmail">
+          E-mail <span style="color:var(--coral)">*</span>
+        </label>
+        <input
+          class="form-input"
+          type="email"
+          id="regEmail"
+          autocomplete="email"
+          required
+          placeholder="seu@email.com"
+        >
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regPassword">
+          Senha <span style="color:var(--coral)">*</span>
+        </label>
+        <input
+          class="form-input"
+          type="password"
+          id="regPassword"
+          autocomplete="new-password"
+          required
+          minlength="6"
+          placeholder="Minimo 6 caracteres"
+        >
+      </div>
+      <button type="submit" class="submit-btn">Criar conta</button>
+    </form>
+  </section>
+
+  <div class="auth-divider" aria-hidden="true">ou</div>
+
+  <button class="google-btn" onclick="googleLoginPlaceholder()" type="button">
+    <!-- Google logo SVG simples -->
+    <svg class="google-logo" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+    </svg>
+    Continuar com Google
+  </button>
+
+  <div class="status-msg" id="statusMsg" role="alert" aria-live="assertive"></div>
 </main>
 
+<p class="auth-back">
+  <a href="/">&larr; Voltar para a loja</a>
+</p>
+
 <script>
-    const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = '';
 
-    function showTab(tab) {
-        document.getElementById('loginSection').style.display = tab === 'login' ? 'block' : 'none';
-        document.getElementById('registerSection').style.display = tab === 'register' ? 'block' : 'none';
-        document.getElementById('loginTab').classList.toggle('active', tab === 'login');
-        document.getElementById('registerTab').classList.toggle('active', tab === 'register');
-        setStatus('', '');
-    }
+function showTab(tab) {
+  document.getElementById('loginSection').classList.toggle('active', tab === 'login');
+  document.getElementById('registerSection').classList.toggle('active', tab === 'register');
+  document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+  document.getElementById('loginTab').setAttribute('aria-selected', tab === 'login');
+  document.getElementById('registerTab').classList.toggle('active', tab === 'register');
+  document.getElementById('registerTab').setAttribute('aria-selected', tab === 'register');
+  clearStatus();
+}
 
-    function setStatus(msg, type) {
-        const el = document.getElementById('status');
-        el.textContent = msg;
-        el.style.color = type === 'error' ? '#e74c3c' : '#27ae60';
-    }
+function setStatus(msg, type) {
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = `status-msg ${type}`;
+}
 
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new URLSearchParams();
-        formData.append('username', document.getElementById('loginEmail').value);
-        formData.append('password', document.getElementById('loginPassword').value);
+function clearStatus() {
+  const el = document.getElementById('statusMsg');
+  el.className = 'status-msg';
+  el.textContent = '';
+}
 
-        try {
-            const resp = await fetch(`${API_BASE}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formData.toString(),
-            });
-            const data = await resp.json();
-            if (!resp.ok) throw new Error(data.detail || 'Falha ao entrar');
-            localStorage.setItem('sensori_token', data.access_token);
-            setStatus('Login realizado com sucesso. Redirecionando...', 'ok');
-            setTimeout(() => {
-                window.location.href = '../admin/produtos.html';
-            }, 800);
-        } catch (err) {
-            console.error(err);
-            setStatus(err.message, 'error');
-        }
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+
+  if (!email || !password) {
+    setStatus('Preencha e-mail e senha para continuar.', 'err');
+    return;
+  }
+
+  const formData = new URLSearchParams();
+  formData.append('username', email);
+  formData.append('password', password);
+
+  try {
+    const resp = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString(),
     });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.detail || 'E-mail ou senha incorretos. Tente novamente.');
+    localStorage.setItem('sensori_token', data.access_token);
+    setStatus('Login realizado com sucesso. Redirecionando...', 'ok');
+    setTimeout(() => {
+      const next = new URLSearchParams(window.location.search).get('next') || '/';
+      window.location.href = next;
+    }, 1000);
+  } catch (err) {
+    setStatus(err.message, 'err');
+  }
+});
 
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const payload = {
-            name: document.getElementById('regName').value,
-            email: document.getElementById('regEmail').value,
-            password: document.getElementById('regPassword').value,
-        };
-        try {
-            const resp = await fetch(`${API_BASE}/auth/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
-            const data = await resp.json();
-            if (!resp.ok) throw new Error(data.detail || 'Falha ao criar conta');
-            setStatus('Conta criada. Agora você pode entrar.', 'ok');
-            showTab('login');
-        } catch (err) {
-            console.error(err);
-            setStatus(err.message, 'error');
-        }
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name     = document.getElementById('regName').value.trim();
+  const email    = document.getElementById('regEmail').value;
+  const password = document.getElementById('regPassword').value;
+
+  if (!name || !email || !password) {
+    setStatus('Preencha todos os campos para criar sua conta.', 'err');
+    return;
+  }
+
+  if (password.length < 6) {
+    setStatus('A senha precisa ter pelo menos 6 caracteres.', 'err');
+    return;
+  }
+
+  try {
+    const resp = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password }),
     });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.detail || 'Nao foi possivel criar a conta. Tente novamente.');
+    setStatus('Conta criada com sucesso! Agora voce pode entrar.', 'ok');
+    showTab('login');
+  } catch (err) {
+    setStatus(err.message, 'err');
+  }
+});
 
-    function googleLoginPlaceholder() {
-        alert('Para usar Google Login: obtenha um Client ID no Google Cloud, use o botão oficial e envie o ID token para /auth/google.');
-    }
+function googleLoginPlaceholder() {
+  setStatus('Login com Google ainda nao esta disponivel. Use e-mail e senha por enquanto.', 'err');
+}
 </script>
 </body>
 </html>

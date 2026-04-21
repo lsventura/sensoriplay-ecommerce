@@ -1,41 +1,152 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>FAQ - Perguntas Frequentes | Sensori Play</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #fafafa; color: #2c3e50; }
-        header { background: #ff6b9d; color: #fff; padding: 1.5rem 2rem; }
-        header h1 { margin: 0; font-size: 1.5rem; }
-        header a { color: #fff; text-decoration: none; font-size: 0.9rem; }
-        main { max-width: 900px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-        h2 { margin-top: 1.5rem; }
-        details { margin-bottom: 1rem; }
-        summary { font-weight: 600; cursor: pointer; }
-        p { margin-top: 0.5rem; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — Perguntas Frequentes | SensoriPlay</title>
+  <meta name="description" content="Dúvidas sobre segurança, envio, pagamento e produtos sensoriais? Encontre as respostas aqui.">
+  <link rel="icon" href="/assets/sensori-play-logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/design-tokens.css">
+  <link rel="stylesheet" href="/assets/base.css">
+  <link rel="stylesheet" href="/assets/components.css">
+  <style>
+    :root {
+      --bg: var(--off-white); --surface: var(--white);
+      --text-main: var(--ink); --text-muted: var(--muted);
+      --font-display: var(--f-display); --font-ui: var(--f-body);
+      --coral-light: var(--coral-soft); --teal-light: var(--teal-soft);
+    }
+
+    .site-nav { background: var(--surface); border-bottom: 1px solid var(--border); box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; }
+    .site-nav-inner { max-width: 1280px; margin: 0 auto; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .logo-link img { height: 44px; }
+    .nav-back { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--teal); font-weight: 500; }
+    .nav-back:hover { text-decoration: underline; }
+
+    .page-hero { background: linear-gradient(135deg, var(--teal-light) 0%, var(--coral-light) 100%); padding: 64px 24px; text-align: center; }
+    .page-hero h1 { font-family: var(--font-display); font-size: clamp(24px, 4vw, 38px); font-weight: 800; margin-bottom: 12px; }
+    .page-hero p { font-size: 16px; color: var(--text-muted); max-width: 500px; margin: 0 auto; }
+
+    .faq-content { max-width: 760px; margin: 0 auto; padding: 56px 24px 80px; }
+
+    .faq-section-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--teal); margin-bottom: 16px; margin-top: 40px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 20px 0; font-size: 15px; font-weight: 600; color: var(--text-main); display: flex; justify-content: space-between; align-items: center; gap: 16px; cursor: pointer; font-family: var(--font-ui); }
+    .faq-q:hover { color: var(--teal); }
+    .faq-chevron { font-size: 18px; transition: transform 0.25s; color: var(--text-muted); flex-shrink: 0; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.3s; font-size: 14px; color: var(--text-muted); line-height: 1.8; }
+    .faq-item.open .faq-a { max-height: 400px; padding-bottom: 20px; }
+
+    .cta-block { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 32px; text-align: center; margin-top: 56px; }
+    .cta-block h3 { font-family: var(--font-display); font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .cta-block p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; text-decoration: none; font-family: var(--font-ui); }
+    .btn-primary { background: var(--coral); color: #fff; }
+    .btn-primary:hover { background: #C73C3C; }
+    .btn-secondary { border: 2px solid var(--teal); color: var(--teal); background: transparent; }
+    .btn-secondary:hover { background: var(--teal-light); }
+
+    .page-footer { background: var(--text-main); color: rgba(255,255,255,0.7); text-align: center; padding: 28px 24px; font-size: 13px; }
+    .page-footer a { color: rgba(255,255,255,0.7); }
+    .page-footer a:hover { color: #fff; }
+  </style>
 </head>
 <body>
-<header>
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h1>Perguntas Frequentes</h1>
-        <a href="../index.html">← Voltar para a loja</a>
+<nav class="site-nav">
+  <div class="site-nav-inner">
+    <a href="/" class="logo-link"><img src="/assets/sensori-play-logo.png" alt="SensoriPlay"></a>
+    <a href="/" class="nav-back">&#8592; Voltar para a loja</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>Perguntas Frequentes</h1>
+  <p>Dúvidas sobre segurança, envio, pagamento ou escolha de produto? Respostas diretas aqui.</p>
+</div>
+
+<div class="faq-content">
+  <div class="faq-section-title">Segurança e certificação</div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Os produtos são seguros para crianças com menos de 3 anos? <span class="faq-chevron">&#8964;</span></button>
+    <div class="faq-a">Sim, desde que você escolha produtos marcados como "0-36 meses" no filtro de faixa etária. Esses itens passam por verificação adicional de ausência de peças pequenas e materiais atóxicos, com certificação INMETRO ou equivalente. A faixa etária indicada não é sugestão — é critério de segurança.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Os produtos têm certificação INMETRO? <span class="faq-chevron">&#8964;</span></button>
+    <div class="faq-a">Todos os produtos fabricados ou comercializados no Brasil seguem a regulamentação do INMETRO. Produtos importados passam por verificação de certificação equivalente (CE, ASTM F963 ou similar). A ficha de cada produto indica o certificado aplicável.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Os materiais são não-tóxicos? <span class="faq-chevron">&#8964;</span></button>
+    <div class="faq-a">É um critério de entrada no catálogo: só incluímos produtos que declararam ausência de BPA, ftalatos e metais pesados acima dos limites seguros. A descrição de cada produto lista os materiais utilizados.</div>
+  </div>
+
+  <div class="faq-section-title">Envio e entrega</div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Vocês enviam para todo o Brasil? <span class="faq-chevron">&#8964;</span></button>
+    <div class="faq-a">Sim. Trabalhamos com Correios (PAC e Sedex) e transportadoras. O prazo e o custo de frete são calculados no carrinho pelo CEP antes de finalizar a compra. Para capitais, o prazo médio é de 3 a 7 dias úteis. Frete grátis para compras acima de R$199.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Como funciona a troca ou devolução? <span class="faq-chevron">&#8964;</span></button>
+    <div class="faq-a">Aceitamos devolução em até 7 dias após o recebimento, sem necessidade de justificativa (CDC). Para troca por defeito, o prazo é de 90 dias. O produto deve estar em condições de uso e na embalagem original. O frete de devolução é por nossa conta em caso de defeito; por conta do cliente em desistência.</div>
+  </div>
+
+  <div class="faq-section-title">Pagamento</div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Posso parcelar a compra? <span class="faq-chevron">&#8964;</span></button>
+    <div class="faq-a">Sim. Aceitamos cartão de crédito em até 6x sem juros para compras acima de R$150, e em até 12x com juros da operadora. Pix e boleto têm desconto de 5%. Processamos via Mercado Pago.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Há desconto no Pix? <span class="faq-chevron">&#8964;</span></button>
+    <div class="faq-a">Sim. Pagamentos via Pix têm 5% de desconto automático no total da compra. O desconto aparece na tela de pagamento antes da confirmação.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Vocês têm lista de presente? <span class="faq-chevron">&#8964;</span></button>
+    <div class="faq-a">Sim. Você pode criar uma lista de desejo compartilhável (útil para chá de bebê ou aniversário) ou comprar com mensagem personalizada. Na finalização, há a opção "É um presente" — o preço não aparece na embalagem.</div>
+  </div>
+
+  <div class="faq-section-title">Escolha de produto</div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Vocês têm produtos para autismo (TEA)? <span class="faq-chevron">&#8964;</span></button>
+    <div class="faq-a">Temos produtos com potencial de apoio para crianças com TEA, mas a maioria beneficia crianças neurodivergentes e de desenvolvimento típico. Em cada produto, indicamos se é mais adequado para hipossensibilidade, hipersensibilidade ou uso geral. Esta categoria reúne produtos com potencial de suporte — não substitui avaliação de profissional de saúde.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Como escolho o produto certo para a faixa etária? <span class="faq-chevron">&#8964;</span></button>
+    <div class="faq-a">Use o filtro "Por faixa etária" na vitrine ou navegue pelas categorias da homepage. Se ainda tiver dúvida, descreva a faixa etária e o que quer estimular pelo e-mail contato@sensoriplay.com.br — respondemos em até 2 horas em dias úteis.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">Posso comprar para uso profissional (consultório, escola)? <span class="faq-chevron">&#8964;</span></button>
+    <div class="faq-a">Sim. Temos modalidade para profissionais com emissão de nota fiscal para CNPJ e curadoria assistida por e-mail para pedidos acima de R$500. Entre em contato pelo e-mail contato@sensoriplay.com.br com o assunto "Pedido profissional".</div>
+  </div>
+
+  <div class="cta-block">
+    <h3>Ainda tem dúvidas?</h3>
+    <p>Nossa equipe responde em até 2 horas em dias úteis.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="/pages/contato.html" class="btn btn-primary">Fale conosco</a>
+      <a href="/" class="btn btn-secondary">Ver produtos</a>
     </div>
-</header>
-<main>
-    <details open>
-        <summary>Como funciona o prazo de produção?</summary>
-        <p>Nossos brinquedos são produzidos sob demanda com impressão 3D. Em média, o prazo de produção é de 3 a 5 dias úteis após a confirmação do pagamento.</p>
-    </details>
-    <details>
-        <summary>Os brinquedos são seguros para todas as idades?</summary>
-        <p>Sim, os modelos são pensados para serem seguros, mas sempre recomendamos o uso sob supervisão de um responsável, especialmente para crianças menores de 3 anos.</p>
-    </details>
-    <details>
-        <summary>Vocês fazem peças personalizadas?</summary>
-        <p>Sim, avaliamos projetos personalizados de acordo com a necessidade. Entre em contato pela página de contato para explicar sua ideia.</p>
-    </details>
-</main>
+  </div>
+</div>
+
+<footer class="page-footer">
+  <p>&copy; 2026 SensoriPlay &nbsp;|&nbsp; <a href="/pages/sobre.html">Sobre</a> &nbsp;|&nbsp; <a href="/pages/contato.html">Contato</a> &nbsp;|&nbsp; <a href="/">Voltar &agrave; loja</a></p>
+</footer>
+
+<script>
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
 </body>
 </html>

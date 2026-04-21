@@ -9,3 +9,5 @@ bcrypt
 python-jose[cryptography]
 passlib[bcrypt]
 google-auth
+mercadopago
+email-validator
